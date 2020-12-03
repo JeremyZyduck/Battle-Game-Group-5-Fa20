@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
@@ -28,14 +29,19 @@ public class Main extends Application {
   //determines the vertical space between sets of relevant elements
   private static final int ELEMENT_SPACE = 40;
   
-  // Text fields to hold name, health, and cost of character.
+  // Text fields to hold name, health, strength, defense, and cost of character.
   private TextField mNameField;
   private TextField mHealthField;
+  private TextField mStrengthField;
+  private TextField mDefenseField;
   private TextField mCostField;
   // Combo boxes to select appearance, main attack, and special attack.
   private ComboBox<String> mAppearanceBox;
   private ComboBox<String> mMainAttackBox;
   private ComboBox<String> mSpecialAttackBox;
+  // ArrayLists of basic attack skills and special attack skills
+  private ArrayList<Skill> mBasicAttacks = new ArrayList<Skill>();
+  private ArrayList<Skill> mSpecialAttacks = new ArrayList<Skill>();
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -61,6 +67,16 @@ public class Main extends Application {
 
     int position = 0;
     
+    // create basic and special attack skills
+    // TEMP
+    addSkill("Main Attack 1", 0, 1.0);
+    addSkill("Main Attack 2", 0, 3.0);
+    addSkill("Main Attack 3", 0, 5.0);
+    addSkill("Special Attack 1", 1, 4.0);
+    addSkill("Special Attack 1", 1, 9.0);
+    addSkill("Special Attack 1", 1, 16.0);
+    // END TEMP
+    
     // prompt for character name
     Label nameLabel = new Label("Input character name:");
     setLabelToDefault(nameLabel, position++);
@@ -75,6 +91,22 @@ public class Main extends Application {
     setFieldNextToLabel(mHealthField, healthLabel);
     setTextFieldListeners(mHealthField);
     setTextFieldOnlyNumbers(mHealthField);
+    
+    // prompt for character strength
+    Label strengthLabel = new Label("Input character strength value:");
+    setLabelToDefault(strengthLabel, position++);
+    mStrengthField = new TextField();
+    setFieldNextToLabel(mStrengthField, strengthLabel);
+    setTextFieldListeners(mStrengthField);
+    setTextFieldOnlyNumbers(mStrengthField);
+    
+    // prompt for character defense
+    Label defenseLabel = new Label("Input character defense value:");
+    setLabelToDefault(defenseLabel, position++);
+    mDefenseField = new TextField();
+    setFieldNextToLabel(mDefenseField, defenseLabel);
+    setTextFieldListeners(mDefenseField);
+    setTextFieldOnlyNumbers(mDefenseField);
 
     // prompt for character appearance
     Label appearanceLabel = new Label("Select character appearance:");
@@ -112,22 +144,18 @@ public class Main extends Application {
     Label mainAttackLabel = new Label("Select primary attack skill:");
     setLabelToDefault(mainAttackLabel, position++);
     mMainAttackBox = new ComboBox<String>();
-    // TEMP
-    mMainAttackBox.getItems().add("Main Attack 1");
-    mMainAttackBox.getItems().add("Main Attack 2");
-    mMainAttackBox.getItems().add("Main Attack 3");
-    // END TEMP
+    for(Skill i : mBasicAttacks){
+    	mMainAttackBox.getItems().add(i.getName());
+    }
     setFieldNextToLabel(mMainAttackBox, mainAttackLabel);
 
     // prompt for secondary attack skill
     Label specialAttackLabel = new Label("Select secondary attack skill:");
     setLabelToDefault(specialAttackLabel, position++);
     mSpecialAttackBox = new ComboBox<String>();
-    // TEMP
-    mSpecialAttackBox.getItems().add("Special Attack 1");
-    mSpecialAttackBox.getItems().add("Special Attack 2");
-    mSpecialAttackBox.getItems().add("Special Attack 3");
-    // END TEMP
+    for(Skill i : mSpecialAttacks){
+    	mSpecialAttackBox.getItems().add(i.getName());
+    }
     setFieldNextToLabel(mSpecialAttackBox, specialAttackLabel);
 
     // Prompt for character cost
@@ -140,6 +168,8 @@ public class Main extends Application {
 
     // submit and clear buttons.
     Button clearButton = new Button("Clear");
+    clearButton.setStyle("-fx-font-size:15");
+    clearButton.setFont(new Font(40));
     clearButton.setPrefHeight(30);
     clearButton.setPrefWidth(100);
     clearButton.setLayoutX(10);
@@ -152,6 +182,8 @@ public class Main extends Application {
       }
     });
     Button submitButton = new Button("Submit");
+    submitButton.setStyle("-fx-font-size:15");
+    submitButton.setFont(new Font(40));
     submitButton.setPrefHeight(clearButton.getPrefHeight());
     submitButton.setPrefWidth(clearButton.getPrefWidth());
     submitButton.setLayoutX(clearButton.getLayoutX() * 2 + submitButton.getPrefWidth());
@@ -165,13 +197,29 @@ public class Main extends Application {
     });
 
     // creates and adds elements to the group
-    Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, appearanceLabel, mAppearanceBox,
-        imageLabel, imageUploadButton,
-        mainAttackLabel, mMainAttackBox, specialAttackLabel, mSpecialAttackBox, costLabel, mCostField,
-        submitButton, clearButton);
+    Group g = new Group(nameLabel,
+    					mNameField,
+    					healthLabel,
+    					mHealthField,
+    					strengthLabel,
+    					mStrengthField,
+    					defenseLabel,
+    					mDefenseField,
+    					appearanceLabel,
+    					mAppearanceBox,
+    					imageLabel,
+    					imageUploadButton,
+    					mainAttackLabel,
+    					mMainAttackBox,
+    					specialAttackLabel,
+    					mSpecialAttackBox,
+    					costLabel,
+    					mCostField,
+    					submitButton,
+    					clearButton);
 
     // creates and displays the scene
-    Scene characterCreationScene = new Scene(g, 500, 500);
+    Scene characterCreationScene = new Scene(g, 500, (int)(ELEMENT_SPACE * position));
     stage.setScene(characterCreationScene);
     stage.show();
   }
@@ -207,6 +255,8 @@ public class Main extends Application {
     // Reset info inside.
     mNameField.setText("");
     mHealthField.setText("");
+    mStrengthField.setText("");
+    mDefenseField.setText("");
     mCostField.setText("");
     mAppearanceBox.getSelectionModel().clearSelection();
     mMainAttackBox.getSelectionModel().clearSelection();
@@ -215,6 +265,8 @@ public class Main extends Application {
     // Reset background colors.
     setTextFieldBackgroundDefault(mNameField);
     setTextFieldBackgroundDefault(mHealthField);
+    setTextFieldBackgroundDefault(mStrengthField);
+    setTextFieldBackgroundDefault(mDefenseField);
     setTextFieldBackgroundDefault(mCostField);
   }
 
@@ -237,6 +289,18 @@ public class Main extends Application {
     if (!validateNumberString(healthStr)) {
       validData = false;
       setTextFieldBackgroundRed(mHealthField);
+    }
+    // Test if the entered strength is an integer.
+    String strengthStr = mStrengthField.getText();
+    if (!validateNumberString(strengthStr)) {
+      validData = false;
+      setTextFieldBackgroundRed(mStrengthField);
+    }
+    // Test if the entered defense is an integer.
+    String defenseStr = mDefenseField.getText();
+    if (!validateNumberString(defenseStr)) {
+      validData = false;
+      setTextFieldBackgroundRed(mDefenseField);
     }
     // Test if the entered cost is an integer.
     String costStr = mCostField.getText();
@@ -338,6 +402,23 @@ public class Main extends Application {
     }
 
     return true;
+  }
+  
+  /**
+   * creates and adds a skill to the appropriate skill list
+   * 
+   * @param name - the skill's name
+   * @param type - the skill's type (0 <- basic attack & 1 <- special attack)
+   * @param power - the skill's power level
+   */
+  private void addSkill(String name, int type, double power){
+	  Skill skill = new Skill(name, type, power);
+	  if(type == 0){
+		  mBasicAttacks.add(skill);
+	  }
+	  if(type == 1){
+		  mSpecialAttacks.add(skill);
+	  }
   }
   
   private void connectToDatabase() {
