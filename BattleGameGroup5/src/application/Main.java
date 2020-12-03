@@ -1,5 +1,11 @@
 package application;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -33,6 +40,7 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     if (1 == 1) {
+      connectToDatabase();
       displayCreationMenu(primaryStage);
     }
   }
@@ -84,6 +92,21 @@ public class Main extends Application {
     setLabelToDefault(imageLabel, position++);
     Button imageUploadButton = new Button("Upload");
     setFieldNextToLabel(imageUploadButton, imageLabel);
+    // When the button is pressed open file explorer to select images.
+    imageUploadButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent arg0) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Upload Image");
+        List<File> list = fileChooser.showOpenMultipleDialog(stage);
+        if (list != null) {
+          for (File file : list) {
+            // TODO Upload file to database.
+            System.out.println(file.getName());
+          }
+        }
+      }
+    });
 
     // prompt for primary attack skill
     Label mainAttackLabel = new Label("Select primary attack skill:");
@@ -195,6 +218,10 @@ public class Main extends Application {
     setTextFieldBackgroundDefault(mCostField);
   }
 
+  /**
+   * Tries to submit the character's info.
+   * If some of the entries are invalid, does not create a new character.
+   */
   private void submitCharacterInfo() {
     // If the entered data is valid.
     boolean validData = true;
@@ -218,14 +245,17 @@ public class Main extends Application {
       setTextFieldBackgroundRed(mCostField);
     }
 
+    // Check if an appearance was selected.
     String appearanceStr = mAppearanceBox.getSelectionModel().getSelectedItem();
     if (appearanceStr == null) {
       validData = false;
     }
+    // Check if a main attack was selected.
     String mainAttackStr = mMainAttackBox.getSelectionModel().getSelectedItem();
     if (mainAttackStr == null) {
       validData = false;
     }
+    // Check if a special attack was selected.
     String specialAttackStr = mSpecialAttackBox.getSelectionModel().getSelectedItem();
     if (specialAttackStr == null) {
       validData = false;
@@ -308,5 +338,17 @@ public class Main extends Application {
     }
 
     return true;
+  }
+  
+  private void connectToDatabase() {
+    /*
+    try {
+      Connection connect = DriverManager.getConnection(
+          "jdbc:mysql://144.13.22.59:3306/feedback?user=[redacted]&password=[redacted]");
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("Failed");
+    }
+    */
   }
 }
