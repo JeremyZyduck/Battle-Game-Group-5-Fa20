@@ -1,11 +1,6 @@
 package application;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -18,10 +13,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -42,12 +38,18 @@ public class Main extends Application {
   // ArrayLists of basic attack skills and special attack skills
   private ArrayList<Skill> mBasicAttacks = new ArrayList<Skill>();
   private ArrayList<Skill> mSpecialAttacks = new ArrayList<Skill>();
+  
+  // Database manager
+  private DatabaseManager mDatabaseManager;
+  // Text fields for database credentials scene.
+  private TextField mDataUserField;
+  private PasswordField mDataPassField;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
     if (1 == 1) {
-      connectToDatabase();
-      displayCreationMenu(primaryStage);
+      mDatabaseManager = new DatabaseManager();
+      promptForUserAndPassDatabase(primaryStage);
     }
   }
 
@@ -119,32 +121,19 @@ public class Main extends Application {
     // END TEMP
     setFieldNextToLabel(mAppearanceBox, appearanceLabel);
     
-    // Prompt for uploading an image to add to the data and appearance box.
-    Label imageLabel = new Label("Add new appearance: ");
+    // Prompt for uploading an image to add to the database and boxes that are to select images.
+    Label imageLabel = new Label("Upload character idle: ");
     setLabelToDefault(imageLabel, position++);
     Button imageUploadButton = new Button("Upload");
     setFieldNextToLabel(imageUploadButton, imageLabel);
     // When the button is pressed open file explorer to select images.
-    imageUploadButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent arg0) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Upload Image");
-        List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        if (list != null) {
-          for (File file : list) {
-            // TODO Upload file to database.
-            System.out.println(file.getName());
-          }
-        }
-      }
-    });
+    imageUploadButton.setOnAction(new AnimationChooser(stage, mDatabaseManager));
 
     // prompt for primary attack skill
     Label mainAttackLabel = new Label("Select primary attack skill:");
     setLabelToDefault(mainAttackLabel, position++);
     mMainAttackBox = new ComboBox<String>();
-    for(Skill i : mBasicAttacks){
+    for(Skill i : mDatabaseManager.getSkills()){
     	mMainAttackBox.getItems().add(i.getName());
     }
     setFieldNextToLabel(mMainAttackBox, mainAttackLabel);
@@ -153,7 +142,7 @@ public class Main extends Application {
     Label specialAttackLabel = new Label("Select secondary attack skill:");
     setLabelToDefault(specialAttackLabel, position++);
     mSpecialAttackBox = new ComboBox<String>();
-    for(Skill i : mSpecialAttacks){
+    for(Skill i : mDatabaseManager.getSkills()){
     	mSpecialAttackBox.getItems().add(i.getName());
     }
     setFieldNextToLabel(mSpecialAttackBox, specialAttackLabel);
@@ -421,15 +410,81 @@ public class Main extends Application {
 	  }
   }
   
-  private void connectToDatabase() {
-    /*
-    try {
-      Connection connect = DriverManager.getConnection(
-          "jdbc:mysql://144.13.22.59:3306/feedback?user=[redacted]&password=[redacted]");
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println("Failed");
+  /**
+   * Small window that prompts the user for credentials to the database.
+   * Opens the add character menu on a successful connection.
+   * 
+   * @param stage Stage
+   */
+  private void promptForUserAndPassDatabase(Stage stage) {    
+    // sets the window's title
+    stage.setTitle("Battle Game - Character Creation - Database Login");
+    
+    int position = 0;
+    
+    Label invalidInfoLabel = new Label("INVALID CREDENTIALS");
+    invalidInfoLabel.setTextFill(Color.web("#BB6666"));
+    invalidInfoLabel.setVisible(false);
+    setLabelToDefault(invalidInfoLabel, position++);
+    
+    // Prompt for user name
+    Label userLabel = new Label("Database Username:");
+    setLabelToDefault(userLabel, position++);
+    mDataUserField = new TextField();
+    setFieldNextToLabel(mDataUserField, userLabel);
+    setTextFieldListeners(mDataUserField);
+    
+    // Prompt for password
+    Label passLabel = new Label("Database Password:");
+    setLabelToDefault(passLabel, position++);
+    mDataPassField = new PasswordField();
+    setFieldNextToLabel(mDataPassField, passLabel);
+    setTextFieldListeners(mDataPassField);
+    
+    // Login button.
+    Button submitButton = new Button("Login");
+    submitButton.setStyle("-fx-font-size:15");
+    submitButton.setFont(new Font(40));
+    submitButton.setPrefHeight(30);
+    submitButton.setPrefWidth(100);
+    submitButton.setLayoutY(ELEMENT_SPACE * position++);
+    // When the button is pressed, submit the character info.
+    submitButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        if (mDatabaseManager.connectToDatabase(mDataUserField.getText(), mDataPassField.getText())) {
+          invalidInfoLabel.setVisible(false);
+          displayCreationMenu(stage);
+        }
+        else {
+          invalidInfoLabel.setVisible(true);
+          checkValidDatabseAccountEntry();
+        }
+      }
+    });
+    
+    // Creates and adds elements to the group
+    Group g = new Group(invalidInfoLabel,
+        userLabel,
+        mDataUserField,
+        passLabel,
+        mDataPassField,
+        submitButton);
+    
+    Scene userPassDataScene = new Scene(g, 500, (int)(ELEMENT_SPACE * position));
+    stage.setScene(userPassDataScene);
+    stage.show();
+  }
+  
+  /**
+   * Sets the database account info fields red if nothing was typed in them.
+   */
+  private void checkValidDatabseAccountEntry() {
+    if (mDataUserField.getText().equals("")) {
+      setTextFieldBackgroundRed(mDataUserField);
     }
-    */
+    if (mDataPassField.getText().equals("")) {
+      setTextFieldBackgroundRed(mDataPassField);
+    }
   }
 }
