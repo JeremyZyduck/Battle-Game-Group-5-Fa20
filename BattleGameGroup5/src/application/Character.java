@@ -1,4 +1,4 @@
-package battlegame;
+package application;
 /**
  * @author Jeremy Zyduck
  */
@@ -6,13 +6,19 @@ public class Character {
 	
 	//Private variables
 	private String name; 
-	private int cost; 
-	private String image; //Character image will reference a link to an image stored on the web server
-	private int damage; 
-	private int health; 
-	private String skillName; //Unsure of how skills will work. Sticking with just adding the name for now.
+	private int cost; //How much the character will cost
+	private String image; //Character images will reference a link to an image stored on the web server
+	private String imageAttack;
+	private String imageSkill;
+	private int strength; 
+	private int defense; 
+	private int health;  
+	private String attackName;
+	private int attackOption;
+	private String skillName;
+	private int skillOption;
 	
-	//Setters
+	//setters
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -22,17 +28,35 @@ public class Character {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public void setDamage(int damage) {
-		this.damage = damage;
+	public void setImageAttack(String imageAttack) {
+		this.imageAttack = imageAttack;
+	}
+	public void setImageSkill(String imageSkill) {
+		this.imageSkill = imageSkill;
+	}
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+	public void setDefense(int defense) {
+		this.defense = defense;
 	}
 	public void setHealth(int health) {
 		this.health = health;
 	}
+	public void setAttackName(String attackName) {
+		this.attackName = attackName;
+	}
+	public void setAttackOption(int attackOption) {
+		this.attackOption = attackOption;
+	}
 	public void setSkillName(String skillName) {
 		this.skillName = skillName;
 	}
+	public void setSkillOption(int skillOption) {
+		this.skillOption = skillOption;
+	}
 	
-	//Getters
+	//getters
 	public String getName() {
 		return name;
 	}
@@ -42,14 +66,36 @@ public class Character {
 	public String getImage() {
 		return image;
 	}
-	public int getDamage() {
-		return damage;
+	public String getImageAttack() {
+		return imageAttack;
+	}
+	public String getImageSkill() {
+		return imageSkill;
+	}
+	public int getStrength() {
+		return strength;
+	}
+	public int getDefense() {
+		return defense;
 	}
 	public int getHealth() {
 		return health;
 	}
+	public String getAttackName() {
+		return attackName;
+	}
+	public int getAttackOption() {
+		return attackOption;
+	}
 	public String getSkillName() {
 		return skillName;
 	}
+	public int getSkillOption() {
+		return skillOption;
+	}
+	
+	
+	
+	
 
 }

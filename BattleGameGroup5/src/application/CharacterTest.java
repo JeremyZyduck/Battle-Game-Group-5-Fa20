@@ -1,4 +1,4 @@
-package battlegame;
+package application;
 
 import static org.junit.Assert.*;
 
@@ -31,13 +31,37 @@ public class CharacterTest {
 		test.setImage(tS);
 		assertEquals (tS,test.getImage());
 	}
+	
+	@Test
+	public void testSetImageAttack() {
+		Character test = new Character();
+		String tS = "Test Name";
+		test.setImageAttack(tS);
+		assertEquals (tS,test.getImageAttack());
+	}
+	
+	@Test
+	public void testSetImageSkill() {
+		Character test = new Character();
+		String tS = "Test Name";
+		test.setImageSkill(tS);
+		assertEquals (tS,test.getImageSkill());
+	}
 
 	@Test
-	public void testSetDamage() {
+	public void testSetStrength() {
 		Character test = new Character();
 		int tI = 1;
-		test.setDamage(tI);
-		assertEquals (tI,test.getDamage());
+		test.setStrength(tI);
+		assertEquals (tI,test.getStrength());
+	}
+	
+	@Test
+	public void testSetDefense() {
+		Character test = new Character();
+		int tI = 1;
+		test.setDefense(tI);
+		assertEquals (tI,test.getDefense());
 	}
 
 	@Test
@@ -49,11 +73,35 @@ public class CharacterTest {
 	}
 
 	@Test
+	public void testSetAttackName() {
+		Character test = new Character();
+		String tS = "Test Name";
+		test.setAttackName(tS);
+		assertEquals (tS,test.getAttackName());
+	}
+	
+	@Test
+	public void testSetAttackOption() {
+		Character test = new Character();
+		int tI = 1;
+		test.setAttackOption(tI);
+		assertEquals (tI,test.getAttackOption());
+	}
+	
+	@Test
 	public void testSetSkillName() {
 		Character test = new Character();
 		String tS = "Test Name";
 		test.setSkillName(tS);
 		assertEquals (tS,test.getSkillName());
+	}
+	
+	@Test
+	public void testSetSkillOption() {
+		Character test = new Character();
+		int tI = 1;
+		test.setSkillOption(tI);
+		assertEquals (tI,test.getSkillOption());
 	}
 
 	@Test
@@ -76,12 +124,33 @@ public class CharacterTest {
 		test.setImage("test");
 		assertEquals ("test",test.getImage());
 	}
+	
+	@Test
+	public void testGetImageAttack() {
+		Character test = new Character();
+		test.setImageAttack("test");
+		assertEquals ("test",test.getImageAttack());
+	}
+	
+	@Test
+	public void testGetImageSkill() {
+		Character test = new Character();
+		test.setImageSkill("test");
+		assertEquals ("test",test.getImageSkill());
+	}
 
 	@Test
-	public void testGetDamage() {
+	public void testGetStrength() {
 		Character test = new Character();
-		test.setDamage(1);
-		assertEquals (1,test.getDamage());
+		test.setStrength(1);
+		assertEquals (1,test.getStrength());
+	}
+	
+	@Test
+	public void testGetDefense() {
+		Character test = new Character();
+		test.setDefense(1);
+		assertEquals (1,test.getDefense());
 	}
 
 	@Test
@@ -96,6 +165,27 @@ public class CharacterTest {
 		Character test = new Character();
 		test.setSkillName("test");
 		assertEquals ("test",test.getSkillName());
+	}
+	
+	@Test
+	public void testGetSkillOption() {
+		Character test = new Character();
+		test.setSkillOption(1);
+		assertEquals (1,test.getSkillOption());
+	}
+	
+	@Test
+	public void testGetAttackName() {
+		Character test = new Character();
+		test.setAttackName("test");
+		assertEquals ("test",test.getAttackName());
+	}
+	
+	@Test
+	public void testGetAttackOption() {
+		Character test = new Character();
+		test.setAttackOption(1);
+		assertEquals (1,test.getAttackOption());
 	}
 
 }
