@@ -38,6 +38,8 @@ public class Main extends Application {
   // ArrayLists of basic attack skills and special attack skills
   private ArrayList<Skill> mBasicAttacks = new ArrayList<Skill>();
   private ArrayList<Skill> mSpecialAttacks = new ArrayList<Skill>();
+  // ArrayList of characters
+  private ArrayList<Character> mCharacters = new ArrayList<Character>();
   
   // Database manager
   private DatabaseManager mDatabaseManager;
@@ -273,6 +275,13 @@ public class Main extends Application {
       validData = false;
       setTextFieldBackgroundRed(mNameField);
     }
+    // Test if the character name is unique
+    for(Character i : mCharacters) {
+    	if(i.getName().equals(charaName)) {
+    		validData = false;
+    		setTextFieldBackgroundRed(mNameField);
+    	}
+    }
     // Test if the entered health is an integer.
     String healthStr = mHealthField.getText();
     if (!validateNumberString(healthStr)) {
@@ -315,8 +324,35 @@ public class Main extends Application {
     }
 
     if (validData) {
-      // TEMP
-      System.out.println("CHARACTER CREATION UNIMPLEMENTED");
+      // Adds character to mCharacters arrayList
+      Character character = new Character();
+      character.setName(charaName);
+      character.setHealth(Integer.parseInt(healthStr));
+      character.setStrength(Integer.parseInt(strengthStr));
+      character.setDefense(Integer.parseInt(defenseStr));
+      character.setAttackName(mainAttackStr);
+      // TODO Attack option
+      character.setSkillName(specialAttackStr);
+      // TODO Skill option
+      character.setCost(Integer.parseInt(costStr));
+      // TODO Character Image
+      mCharacters.add(character);
+      
+      // Clears all fields
+      mNameField.clear();
+      mHealthField.clear();
+      mDefenseField.clear();
+      mStrengthField.clear();
+      mCostField.clear();
+      mMainAttackBox.getSelectionModel().clearSelection();
+      mSpecialAttackBox.getSelectionModel().clearSelection();
+      mAppearanceBox.getSelectionModel().clearSelection();
+      
+      
+      // Outputs information for all characters stored in the mCharacters arrayList
+      for(Character i : mCharacters) {
+    	  i.printAll();
+      }
     }
   }
 
