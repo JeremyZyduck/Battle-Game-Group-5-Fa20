@@ -17,8 +17,6 @@ import javafx.stage.Stage;
 public class AnimationChooser implements EventHandler<ActionEvent> {
   // Stage to open file chooser on.
   private Stage mStage;
-  // Reference to the database manager.
-  private DatabaseManager mDatabaseManager;
   // File that was selected.
   private File mAnimation;
   
@@ -27,9 +25,8 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
    * 
    * @param stage Stage to open file chooser on.
    */
-  public AnimationChooser(Stage stage, DatabaseManager manager) {
+  public AnimationChooser(Stage stage) {
     mStage = stage;
-    mDatabaseManager = manager;
   }
   
   /**

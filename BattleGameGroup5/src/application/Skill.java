@@ -1,13 +1,18 @@
 package application;
 
+import java.awt.image.BufferedImage;
+
 public class Skill
 {
 	//name of the skill
 	private String mName;
-	//determines the skill's type. 0 <- basic attack, 1 <- special attack, 2 <- block
-	private int mType;
+	//determines the skill's type. 0 <- idle, 1 <- normal attack, 2 <- special attack
+	private SkillType mType;
 	//damage dealt or prevented by skill
 	private double mPower;
+	
+	// Image associate with the skill
+	private BufferedImage mImage;
 	
 	
 	/**
@@ -16,11 +21,13 @@ public class Skill
 	 * @param name - the skill's name
 	 * @param type - the skill's type
 	 * @param power - the skill's power
+	 * @param image - the skill's image
 	 */
-	public Skill(String name, int type, double power){
+	public Skill(String name, SkillType type, double power, BufferedImage image){
 		this.mName = name;
 		this.mType = type;
 		this.mPower = power;
+		this.mImage = image;
 	}
 	
 	/**
@@ -37,7 +44,7 @@ public class Skill
 	 * 
 	 * @return mName
 	 */
-	public int getType(){
+	public SkillType getType(){
 		return this.mType;
 	}
 	
@@ -48,6 +55,15 @@ public class Skill
 	 */
 	public double getPower(){
 		return this.mPower;
+	}
+	
+	/**
+	 * Getter for the skill's image
+	 * 
+	 * @return mImage
+	 */
+	public BufferedImage getImage() {
+	  return this.mImage;
 	}
 	
 	/**
@@ -64,7 +80,7 @@ public class Skill
 	 * 
 	 * @param type - the skill's type
 	 */
-	public void setType(int type){
+	public void setType(SkillType type){
 		this.mType = type;
 	}
 	
@@ -75,6 +91,15 @@ public class Skill
 	 */
 	public void  setPower(double power){
 		this.mPower = power;
+	}
+	
+	/**
+	 * Setter for the skill's image.
+	 * 
+	 * @param image - the skill's image
+	 */
+	public void setImage(BufferedImage image) {
+	  this.mImage = image;
 	}
 	
 }

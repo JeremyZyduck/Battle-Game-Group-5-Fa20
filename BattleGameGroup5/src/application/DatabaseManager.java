@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.image.BufferedImage;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,17 +8,23 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
 /**
  * Manages the connection to the database.
  * 
  * @author Wyatt
  *
  */
-public class DatabaseManager {
+public class DatabaseManager { 
   // Connection to the database.
   private Connection mConnection;
   // Current skills in the database.
-  private ArrayList<Skill> mSkills;
+  private ArrayList<Skill> mIdleSkills;
+  // Current normal skills in the database.
+  private ArrayList<Skill> mNormalSkills;
+  // Current special skills in the database.
+  private ArrayList<Skill> mSpecialSkills;
   
   /**
    * Attempts to connect to the database.
@@ -30,7 +37,7 @@ public class DatabaseManager {
   public boolean connectToDatabase(String user, String pass) {
     try {
       mConnection = DriverManager.getConnection("jdbc:mysql://144.13.22.59:3306/G5AgileExperience", user, pass);
-      System.out.println("Connected With the database successfully");
+      System.out.println("Connected with the database successfully");
       
       // Pull some data from the database right away.
       pullSkillsFromDatabase();
@@ -48,7 +55,9 @@ public class DatabaseManager {
    */
   private void pullSkillsFromDatabase() {
     // Initialize skills list.
-    mSkills = new ArrayList<Skill>();
+    mIdleSkills = new ArrayList<Skill>();
+    mNormalSkills = new ArrayList<Skill>();
+    mSpecialSkills = new ArrayList<Skill>();
     
     try {
       // Query for attacks.
@@ -58,10 +67,30 @@ public class DatabaseManager {
       
       // Iterate over all rows.
       while (rs.next()) {
-        String id = rs.getNString("id");
-        Blob image = rs.getBlob("image");
+        // Get data.
+        String idleID = rs.getNString("idleImageID");
+        String normalID = rs.getNString("normalAttackID");
+        String specialID = rs.getNString("specialAttackID");
+        Blob idleBlob = rs.getBlob("idleImage");
+        Blob normalBlob = rs.getBlob("normalImage");
+        Blob specialBlob = rs.getBlob("specialImage");
+        // Convert blobs to buffered images.
+        BufferedImage idleImage = null;
+        BufferedImage normalImage = null;
+        BufferedImage specialImage = null;
+        if (idleBlob != null) {
+          idleImage = ImageIO.read(idleBlob.getBinaryStream());
+        }
+        if (normalBlob != null) {
+          normalImage = ImageIO.read(normalBlob.getBinaryStream());
+        }
+        if (specialBlob != null) {
+          specialImage = ImageIO.read(specialBlob.getBinaryStream());
+        }
         // Create the skill with appropriate data.
-        mSkills.add(new Skill(id, 0, 0));
+        mIdleSkills.add(new Skill(idleID, SkillType.IDLE, 0, idleImage));
+        mNormalSkills.add(new Skill(normalID, SkillType.NORMAL, 1, normalImage));
+        mSpecialSkills.add(new Skill(specialID, SkillType.SPECIAL, 1, specialImage));
       }
 
     } catch (Exception e) {
@@ -70,12 +99,28 @@ public class DatabaseManager {
   }
   
   /**
-   * Returns the skills from the database.
+   * Returns the idle skills from the database.
    * 
-   * @return List<Skill> Skills in the database.
+   * @return List<Skill> Idle skills in the database.
    */
-  public ArrayList<Skill> getSkills() {
-    return mSkills;
+  public ArrayList<Skill> getIdleSkills() {
+    return mIdleSkills;
+  }
+  /**
+   * Returns the normal skills from the database.
+   * 
+   * @return List<Skill> Normal skills in the database.
+   */
+  public ArrayList<Skill> getNormalSkills() {
+    return mNormalSkills;
+  }
+  /**
+   * Returns the special skills from the database.
+   * 
+   * @return List<Skill> Special skills in the database.
+   */
+  public ArrayList<Skill> getSpecialSkills() {
+    return mSpecialSkills;
   }
   
   /**
