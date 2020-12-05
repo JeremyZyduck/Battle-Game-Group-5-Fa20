@@ -101,7 +101,13 @@ public class CreationScene extends SceneManager {
     setLabelToDefault(newSkillLabel, position++);
     Button newSkillButton = new Button("New Skill");
     setFieldNextToLabel(newSkillButton, newSkillLabel);
-    // TODO When the button is pressed, open a skill creation menu.
+    // When the button is pressed, open a skill creation menu.
+    newSkillButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent arg0) {
+        swapToLink(NewSkillScene.TITLE);
+      }
+    });
 
     // Prompt for character cost
     Label costLabel = new Label("Input character cost:");

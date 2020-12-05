@@ -2,12 +2,15 @@ package application;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class NewSkillScene extends SceneManager {
@@ -32,7 +35,6 @@ public class NewSkillScene extends SceneManager {
    */
   public NewSkillScene(Stage stage, DatabaseManager dataMan) {
     super(stage, TITLE, dataMan);
-    mAnimChooser = new AnimationChooser(stage); 
   }
 
   /**
@@ -91,11 +93,58 @@ public class NewSkillScene extends SceneManager {
     Button imageUploadButton = new Button("Upload");
     setFieldNextToLabel(imageUploadButton, imageLabel); 
     // When the button is pressed open file explorer to select images.
+    mAnimChooser = new AnimationChooser(getStage()); 
     imageUploadButton.setOnAction(mAnimChooser);
+    
+    // Image name selected for the upload.
+    Label imageNameLabel = new Label("");
+    setLabelToDefault(imageNameLabel, position++);
+    ImageView imageView = new ImageView();
+    imageView.setFitHeight(ELEMENT_SPACE * 2);
+    imageView.setFitWidth(ELEMENT_SPACE * 2);
+    imageView.setPreserveRatio(true);
+    position += 2;
+    setFieldNextToLabel(imageView, imageNameLabel);
+    // After a new file is chosen, update its info on the page.
+    mAnimChooser.addOnSelectEvent(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        if (mAnimChooser.getFile() != null && mAnimChooser.getAnimation() != null) {
+          imageNameLabel.setText(mAnimChooser.getFile().getName());
+          imageView.setImage(mAnimChooser.getAnimation());
+        }
+      }
+    });
+    
+    // Button to cancel
+    Button cancelButt = new Button("Cancel");
+    cancelButt.setLayoutY(ELEMENT_SPACE * position);
+    cancelButt.setLayoutX(ELEMENT_SPACE);
+    // When canceled, return to the creation scene.
+    cancelButt.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        swapToLink(CreationScene.TITLE);
+      }
+    });
+    
+    // Button to submit
+    Button submitButt = new Button("Submit");
+    submitButt.setLayoutY(ELEMENT_SPACE * position++);
+    submitButt.setLayoutX(cancelButt.getLayoutBounds().getMaxX() + ELEMENT_SPACE * 3);
+    // When submit is pressed, try to upload the skill (return to creation if successful)
+    submitButt.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        // TODO Upload skill to database.
+        
+      }
+    });
+    
 
     // Creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, typeLabel, mTypeBox, powerLabel, mPowerField, imageLabel,
-        imageUploadButton);
+        imageUploadButton, imageNameLabel, imageView, cancelButt, submitButt);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }

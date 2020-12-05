@@ -12,6 +12,18 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+/**
+ * Meant to be a base class when creating different scenes.
+ * 
+ * When you want to create a scene, extend this and place the
+ * code for the elements of the scene in the createScene override.
+ * 
+ * If you need to use data from the database, use the database manager to
+ * get that data in an override of onLoad.
+ * 
+ * @author Wyatt
+ *
+ */
 public abstract class SceneManager {
   // Constants
   // Determines the vertical space between sets of relevant elements
@@ -173,6 +185,14 @@ public abstract class SceneManager {
     field.setStyle("-fx-control-inner-background: #" + color);
   }
   
+  /**
+   * Returns the stage the scene is on.
+   * 
+   * @return Stage - stage the scene is on.
+   */
+  public Stage getStage() {
+    return mStage;
+  }
   /**
    * Returns the title of the scene.
    * 

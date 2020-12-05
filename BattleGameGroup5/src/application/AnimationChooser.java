@@ -1,9 +1,11 @@
 package application;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -18,7 +20,9 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   // Stage to open file chooser on.
   private Stage mStage;
   // File that was selected.
-  private File mAnimation;
+  private File mFile;
+  
+  private ArrayList<EventHandler<ActionEvent>> mOnSelectEvents;
   
   /**
    * Constructs an AnimationChooser.
@@ -27,6 +31,7 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
    */
   public AnimationChooser(Stage stage) {
     mStage = stage;
+    mOnSelectEvents = new ArrayList<EventHandler<ActionEvent>>();
   }
   
   /**
@@ -43,15 +48,43 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
     fileChooser.getExtensionFilters().add(imageFilter);
     fileChooser.setTitle("Upload Animation");
     // Get selected file.
-    mAnimation = fileChooser.showOpenDialog(mStage);
+    mFile = fileChooser.showOpenDialog(mStage);
+    
+    // Call on select events.
+    for (EventHandler<ActionEvent> eventHandle : mOnSelectEvents) {
+      eventHandle.handle(null);
+    }
+  }
+  
+  /**
+   * Adds an EventHandler to do things after the animation is chosen.
+   * 
+   * @param event Event to execute handle() of when the animation is chosen.
+   */
+  public void addOnSelectEvent(EventHandler<ActionEvent> event) {
+    mOnSelectEvents.add(event);
+  }
+  
+  /**
+   * Returns the most recent file that was gotten by the file chooser.
+   * 
+   * @return File file that was selected.
+   */
+  public File getFile() {
+    return mFile;
   }
   
   /**
    * Returns the most recent animation gotten by the file chooser.
    * 
-   * @return File animation that was selected.
+   * @return Image animation that was selected.
    */
-  public File getAnimation() {
-    return mAnimation;
+  public Image getAnimation() {
+    try {
+      return new Image(mFile.toURI().toURL().toExternalForm());
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

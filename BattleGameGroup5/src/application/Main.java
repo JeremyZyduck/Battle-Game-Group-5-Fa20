@@ -52,5 +52,9 @@ public class Main extends Application {
   private void establishLinks() {
     // DatabaseLoginScene links.
     mDatabaseLoginScene.addLink(mCreationScene);
+    // CreationScene links.
+    mCreationScene.addLink(mSkillScene);
+    // SkillScene links.
+    mSkillScene.addLink(mCreationScene);
   }
 }
