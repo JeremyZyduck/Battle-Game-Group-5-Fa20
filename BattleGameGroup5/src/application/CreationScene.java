@@ -29,9 +29,6 @@ public class CreationScene extends SceneManager {
   private ComboBox<String> mMainAttackBox;
   private ComboBox<String> mSpecialAttackBox;
 
-  // ArrayList of characters
-  private ArrayList<Character> mCharacters = new ArrayList<Character>();
-
   /**
    * Constructs the creation scene.
    */
@@ -214,7 +211,7 @@ public class CreationScene extends SceneManager {
       setTextFieldBackgroundRed(mNameField);
     }
     // Test if the character name is unique
-    for (Character i : mCharacters) {
+    for (Character i : mDatabaseManager.getCharacters()) {
       if (i.getName().equals(charaName)) {
         validData = false;
         setTextFieldBackgroundRed(mNameField);
@@ -274,7 +271,13 @@ public class CreationScene extends SceneManager {
       // TODO Skill option
       character.setCost(Integer.parseInt(costStr));
       // TODO Character Image
-      mCharacters.add(character);
+      
+      // TEMP TODO
+      character.setImage(appearanceStr);
+      character.setImageAttack(mainAttackStr);
+      character.setImageSkill(specialAttackStr);
+      // Upload character.
+      mDatabaseManager.uploadCharacter(character);
 
       // Clears all fields
       mNameField.clear();
@@ -287,7 +290,7 @@ public class CreationScene extends SceneManager {
       mAppearanceBox.getSelectionModel().clearSelection();
 
       // Outputs information for all characters stored in the mCharacters arrayList
-      for (Character i : mCharacters) {
+      for (Character i : mDatabaseManager.getCharacters()) {
         i.printAll();
       }
     }

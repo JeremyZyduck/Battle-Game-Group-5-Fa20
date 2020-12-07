@@ -25,6 +25,8 @@ public class DatabaseManager {
   private ArrayList<Skill> mNormalSkills;
   // Current special skills in the database.
   private ArrayList<Skill> mSpecialSkills;
+  // ArrayList of characters
+  private ArrayList<Character> mCharacters;
   
   /**
    * Attempts to connect to the database.
@@ -41,6 +43,7 @@ public class DatabaseManager {
       
       // Pull some data from the database right away.
       pullSkillsFromDatabase();
+      pullCharactersFromDatabase();
       
       return true;
     } catch (Exception e) {
@@ -99,6 +102,70 @@ public class DatabaseManager {
   }
   
   /**
+   * Pull characters from database.
+   */
+  private void pullCharactersFromDatabase() {
+    // Initialize the characters list.
+    mCharacters = new ArrayList<Character>();
+    
+    try {
+      // Query for characters.
+      Statement state = mConnection.createStatement();
+      String query = "SELECT * FROM G5AgileExperience.character";
+      ResultSet rs = state.executeQuery(query);
+      
+      // Iterate over all rows.
+      while (rs.next()) {
+        // Get data.
+        int characterID = rs.getInt("characterID");
+        String characterName = rs.getNString("characterName");
+        String idleImageID = rs.getNString("idleImageID");
+        String normalAttackID = rs.getNString("idleImageID");
+        String specialAttackID = rs.getNString("specialAttackID");
+
+        // Create the character with appropriate data.
+        Character newChar = new Character();
+        newChar.setName(characterName);
+        newChar.setAttackName(normalAttackID);
+        newChar.setSkillName(specialAttackID);
+        mCharacters.add(newChar);
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Uploads a character to the database.
+   * 
+   * @param character Character to be uploaded to the database.
+   * @return boolean True if the character was added to the database or not.
+   */
+  public boolean uploadCharacter(Character character) {
+    
+    try {
+      // Create the query to add characters.
+      Statement state = mConnection.createStatement();
+      String query = "INSERT INTO G5AgileExperience.character "
+          + "VALUES ((SELECT MAX(c.characterID) "
+          + "FROM G5AgileExperience.character c) + 1, "
+          + "'" + character.getName() + "', "
+          + "'" + character.getImage() + "', "
+          + "'" + character.getImageAttack() + "', "
+          + "'" + character.getImageSkill() + "');";
+      state.executeUpdate(query);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+    
+    mCharacters.add(character);
+    return true;
+  }
+  
+  /**
    * Returns the idle skills from the database.
    * 
    * @return List<Skill> Idle skills in the database.
@@ -121,6 +188,14 @@ public class DatabaseManager {
    */
   public ArrayList<Skill> getSpecialSkills() {
     return mSpecialSkills;
+  }
+  /**
+   * Returns the characters from the database.
+   * 
+   * @return List<Character> Characters in the database.
+   */
+  public ArrayList<Character> getCharacters() {
+    return mCharacters;
   }
   
   /**
