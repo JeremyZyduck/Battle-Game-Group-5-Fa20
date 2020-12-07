@@ -65,7 +65,7 @@ public class NewSkillScene extends SceneManager {
       @Override
       public void changed(ObservableValue<? extends SkillType> observable, SkillType oldValue, SkillType newValue) {
         // Set visible when swapping off an idle skill.
-        if (newValue != SkillType.IDLE && oldValue == SkillType.IDLE) {
+        if (newValue != SkillType.IDLE) {
           powerLabel.setVisible(true);
           mPowerField.setVisible(true);
         }
