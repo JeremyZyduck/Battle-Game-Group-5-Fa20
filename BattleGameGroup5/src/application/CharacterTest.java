@@ -49,22 +49,6 @@ public class CharacterTest {
 	}
 
 	@Test
-	public void testSetStrength() {
-		Character test = new Character();
-		int tI = 1;
-		test.setStrength(tI);
-		assertEquals (tI,test.getStrength());
-	}
-	
-	@Test
-	public void testSetDefense() {
-		Character test = new Character();
-		int tI = 1;
-		test.setDefense(tI);
-		assertEquals (tI,test.getDefense());
-	}
-
-	@Test
 	public void testSetHealth() {
 		Character test = new Character();
 		int tI = 1;
@@ -79,29 +63,13 @@ public class CharacterTest {
 		test.setAttackName(tS);
 		assertEquals (tS,test.getAttackName());
 	}
-	
-	@Test
-	public void testSetAttackOption() {
-		Character test = new Character();
-		int tI = 1;
-		test.setAttackOption(tI);
-		assertEquals (tI,test.getAttackOption());
-	}
-	
+
 	@Test
 	public void testSetSkillName() {
 		Character test = new Character();
 		String tS = "Test Name";
 		test.setSkillName(tS);
 		assertEquals (tS,test.getSkillName());
-	}
-	
-	@Test
-	public void testSetSkillOption() {
-		Character test = new Character();
-		int tI = 1;
-		test.setSkillOption(tI);
-		assertEquals (tI,test.getSkillOption());
 	}
 
 	@Test
@@ -140,20 +108,6 @@ public class CharacterTest {
 	}
 
 	@Test
-	public void testGetStrength() {
-		Character test = new Character();
-		test.setStrength(1);
-		assertEquals (1,test.getStrength());
-	}
-	
-	@Test
-	public void testGetDefense() {
-		Character test = new Character();
-		test.setDefense(1);
-		assertEquals (1,test.getDefense());
-	}
-
-	@Test
 	public void testGetHealth() {
 		Character test = new Character();
 		test.setHealth(1);
@@ -168,24 +122,10 @@ public class CharacterTest {
 	}
 	
 	@Test
-	public void testGetSkillOption() {
-		Character test = new Character();
-		test.setSkillOption(1);
-		assertEquals (1,test.getSkillOption());
-	}
-	
-	@Test
 	public void testGetAttackName() {
 		Character test = new Character();
 		test.setAttackName("test");
 		assertEquals ("test",test.getAttackName());
-	}
-	
-	@Test
-	public void testGetAttackOption() {
-		Character test = new Character();
-		test.setAttackOption(1);
-		assertEquals (1,test.getAttackOption());
 	}
 
 }

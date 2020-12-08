@@ -263,12 +263,9 @@ public class CreationScene extends SceneManager {
       Character character = new Character();
       character.setName(charaName);
       character.setHealth(Integer.parseInt(healthStr));
-      character.setStrength(Integer.parseInt(strengthStr));
-      character.setDefense(Integer.parseInt(defenseStr));
+
       character.setAttackName(mainAttackStr);
-      // TODO Attack option
       character.setSkillName(specialAttackStr);
-      // TODO Skill option
       character.setCost(Integer.parseInt(costStr));
       // TODO Character Image
       
