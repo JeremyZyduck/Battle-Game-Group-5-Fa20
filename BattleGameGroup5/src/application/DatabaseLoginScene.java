@@ -70,7 +70,7 @@ public class DatabaseLoginScene extends SceneManager {
       public void handle(ActionEvent event) {
         if (mDatabaseManager.connectToDatabase(mDataUserField.getText(), mDataPassField.getText())) {
           invalidInfoLabel.setVisible(false);
-          swapToLink(CreationScene.TITLE);
+          swapToLink(CharacterListScene.TITLE);
         } else {
           invalidInfoLabel.setVisible(true);
           checkValidDatabseAccountEntry();

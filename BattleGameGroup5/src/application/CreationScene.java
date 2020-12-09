@@ -1,7 +1,5 @@
 package application;
 
-import java.util.ArrayList;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -31,6 +29,9 @@ public class CreationScene extends SceneManager {
 
   /**
    * Constructs the creation scene.
+   * 
+   * @param stage - Stage the scene will be on.
+   * @param dataMan - Database manager.
    */
   public CreationScene(Stage stage, DatabaseManager dataMan) {
     super(stage, TITLE, dataMan);
@@ -143,11 +144,26 @@ public class CreationScene extends SceneManager {
         submitCharacterInfo();
       }
     });
+    
+    Button backButton = new Button("Back");
+    backButton.setStyle("-fx-font-size:15");
+    backButton.setFont(new Font(40));
+    backButton.setPrefHeight(clearButton.getPrefHeight());
+    backButton.setPrefWidth(clearButton.getPrefWidth());
+    backButton.setLayoutX(submitButton.getLayoutX() + backButton.getPrefWidth() * 2);
+    backButton.setLayoutY(clearButton.getLayoutY());
+    // When the button is pressed, return to the character list.
+    backButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent arg0) {
+        swapToLink(CharacterListScene.TITLE);
+      }
+    });
 
     // creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, strengthLabel, mStrengthField, defenseLabel,
         mDefenseField, appearanceLabel, mAppearanceBox, newSkillLabel, newSkillButton, mainAttackLabel, mMainAttackBox,
-        specialAttackLabel, mSpecialAttackBox, costLabel, mCostField, submitButton, clearButton);
+        specialAttackLabel, mSpecialAttackBox, costLabel, mCostField, submitButton, clearButton, backButton);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }

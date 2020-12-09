@@ -1,6 +1,6 @@
 package application;
 
-import java.awt.image.BufferedImage;
+import javafx.scene.image.Image;
 
 public class Skill
 {
@@ -12,7 +12,7 @@ public class Skill
 	private double mPower;
 	
 	// Image associate with the skill
-	private BufferedImage mImage;
+	private Image mImage;
 	
 	
 	/**
@@ -23,7 +23,7 @@ public class Skill
 	 * @param power - the skill's power
 	 * @param image - the skill's image
 	 */
-	public Skill(String name, SkillType type, double power, BufferedImage image){
+	public Skill(String name, SkillType type, double power, Image image){
 		this.mName = name;
 		this.mType = type;
 		this.mPower = power;
@@ -62,7 +62,7 @@ public class Skill
 	 * 
 	 * @return mImage
 	 */
-	public BufferedImage getImage() {
+	public Image getImage() {
 	  return this.mImage;
 	}
 	
@@ -98,7 +98,7 @@ public class Skill
 	 * 
 	 * @param image - the skill's image
 	 */
-	public void setImage(BufferedImage image) {
+	public void setImage(Image image) {
 	  this.mImage = image;
 	}
 	

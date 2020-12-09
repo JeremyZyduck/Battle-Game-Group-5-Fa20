@@ -13,6 +13,8 @@ public class Main extends Application {
   private CreationScene mCreationScene;
   // Scene for creating a new skill.
   private NewSkillScene mSkillScene;
+  // Scene for viewing all the created characters.
+  private CharacterListScene mCharacterListScene;
 
   /**
    * Starts the application.
@@ -27,7 +29,6 @@ public class Main extends Application {
     createScenes(primaryStage);
     establishLinks();
     mDatabaseLoginScene.swapToScene();
-    //mSkillScene.swapToScene();
   }
 
   public static void main(String[] args) {
@@ -44,6 +45,7 @@ public class Main extends Application {
     mDatabaseLoginScene = new DatabaseLoginScene(stage, mDatabaseManager);
     mCreationScene = new CreationScene(stage, mDatabaseManager);
     mSkillScene = new NewSkillScene(stage, mDatabaseManager);
+    mCharacterListScene = new CharacterListScene(stage, mDatabaseManager);
   }
   
   /**
@@ -51,10 +53,13 @@ public class Main extends Application {
    */
   private void establishLinks() {
     // DatabaseLoginScene links.
-    mDatabaseLoginScene.addLink(mCreationScene);
+    mDatabaseLoginScene.addLink(mCharacterListScene);
     // CreationScene links.
     mCreationScene.addLink(mSkillScene);
+    mCreationScene.addLink(mCharacterListScene);
     // SkillScene links.
     mSkillScene.addLink(mCreationScene);
+    // Character list links.
+    mCharacterListScene.addLink(mCreationScene);
   }
 }

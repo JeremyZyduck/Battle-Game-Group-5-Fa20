@@ -1,7 +1,10 @@
 package application;
 
+import javax.imageio.ImageIO;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -10,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -136,8 +140,7 @@ public class NewSkillScene extends SceneManager {
     submitButt.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        // TODO Upload skill to database.
-        
+        uploadSkill();
       }
     });
     
@@ -147,6 +150,42 @@ public class NewSkillScene extends SceneManager {
         imageUploadButton, imageNameLabel, imageView, cancelButt, submitButt);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
+  }
+  
+  private void uploadSkill() {
+    // Check if everything is valid.
+    boolean isValid = true;
+    // Check if name is valid.
+    if (mNameField.getText() == null || mNameField.getText().equals("")) {
+      setTextFieldBackgroundRed(mNameField);
+      isValid = false;
+    }
+    // Check if type is valid.
+    if (mTypeBox.getValue() == null) {
+      isValid = false;
+    }
+    // Check if power if valid.
+    if (mPowerField.getText() == null || mPowerField.getText().equals("")) {
+      setTextFieldBackgroundRed(mPowerField);
+      isValid = false;
+    }
+    // Check if image was uploaded.
+    Image im = null;
+    if (mAnimChooser.getFile() != null) {
+      // Get the buffered image for the skill.
+      try {
+        im = SwingFXUtils.toFXImage(ImageIO.read(mAnimChooser.getFile()), null);
+      } catch (Exception e) {
+        e.printStackTrace();
+        isValid = false;
+      }
+    }
+    
+    if (isValid) {
+      // Upload the skill to the database.
+      mDatabaseManager.uploadSkill(new Skill(mNameField.getText(), mTypeBox.getValue(), 
+          Integer.parseInt(mPowerField.getText()), im));
+    }
   }
 
 }
