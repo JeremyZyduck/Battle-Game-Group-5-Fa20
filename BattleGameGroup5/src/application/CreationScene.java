@@ -22,10 +22,10 @@ public class CreationScene extends SceneManager {
   private TextField mStrengthField;
   private TextField mDefenseField;
   private TextField mCostField;
-  // Combo boxes to select appearance, main attack, and special attack.
-  private ComboBox<String> mAppearanceBox;
-  private ComboBox<String> mMainAttackBox;
-  private ComboBox<String> mSpecialAttackBox;
+  // Labels to see the name of the idle, normal, and special skills.
+  private Label mIdleLabel;
+  private Label mNormalLabel;
+  private Label mSpecialLabel;
 
   /**
    * Constructs the creation scene.
@@ -79,20 +79,20 @@ public class CreationScene extends SceneManager {
     // prompt for character appearance
     Label appearanceLabel = new Label("Select character idle:");
     setLabelToDefault(appearanceLabel, position++);
-    mAppearanceBox = new ComboBox<String>();
-    setFieldNextToLabel(mAppearanceBox, appearanceLabel);
+    mIdleLabel = new Label("None");
+    setFieldNextToLabel(mIdleLabel, appearanceLabel);
 
     // prompt for primary attack skill
     Label mainAttackLabel = new Label("Select primary attack skill:");
     setLabelToDefault(mainAttackLabel, position++);
-    mMainAttackBox = new ComboBox<String>();
-    setFieldNextToLabel(mMainAttackBox, mainAttackLabel);
+    mNormalLabel = new Label("None");
+    setFieldNextToLabel(mNormalLabel, mainAttackLabel);
 
     // prompt for secondary attack skill
     Label specialAttackLabel = new Label("Select secondary attack skill:");
     setLabelToDefault(specialAttackLabel, position++);
-    mSpecialAttackBox = new ComboBox<String>();
-    setFieldNextToLabel(mSpecialAttackBox, specialAttackLabel);
+    mSpecialLabel = new Label("None");
+    setFieldNextToLabel(mSpecialLabel, specialAttackLabel);
 
     // Prompt to create a new skill
     Label newSkillLabel = new Label("Create new skill/idle: ");
@@ -162,32 +162,19 @@ public class CreationScene extends SceneManager {
 
     // creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, strengthLabel, mStrengthField, defenseLabel,
-        mDefenseField, appearanceLabel, mAppearanceBox, newSkillLabel, newSkillButton, mainAttackLabel, mMainAttackBox,
-        specialAttackLabel, mSpecialAttackBox, costLabel, mCostField, submitButton, clearButton, backButton);
+        mDefenseField, appearanceLabel, mIdleLabel, newSkillLabel, newSkillButton, mainAttackLabel, mNormalLabel,
+        specialAttackLabel, mSpecialLabel, costLabel, mCostField, submitButton, clearButton, backButton);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }
   
   /**
-   * When the scene loads, pulls from the database to populate selection fields.
+   * 
    */
   @Override
   protected void onLoad() {
-    // Combo boxes.
-    // Clear the lists.
-    mAppearanceBox.getItems().clear();
-    mMainAttackBox.getItems().clear();
-    mSpecialAttackBox.getItems().clear();
-    // Populate from database.
-    for (Skill i : mDatabaseManager.getIdleSkills()) {
-      mAppearanceBox.getItems().add(i.getName());
-    }
-    for (Skill i : mDatabaseManager.getNormalSkills()) {
-      mMainAttackBox.getItems().add(i.getName());
-    }
-    for (Skill i : mDatabaseManager.getSpecialSkills()) {
-      mSpecialAttackBox.getItems().add(i.getName());
-    }
+    // TODO change how this works. Get the currently selected character if any.
+    // And then change the labels to that characters things.
   }
 
   /**
@@ -200,9 +187,7 @@ public class CreationScene extends SceneManager {
     mStrengthField.setText("");
     mDefenseField.setText("");
     mCostField.setText("");
-    mAppearanceBox.getSelectionModel().clearSelection();
-    mMainAttackBox.getSelectionModel().clearSelection();
-    mSpecialAttackBox.getSelectionModel().clearSelection();
+    // TODO Clear skills?
 
     // Reset background colors.
     setTextFieldBackgroundDefault(mNameField);
@@ -258,21 +243,8 @@ public class CreationScene extends SceneManager {
       setTextFieldBackgroundRed(mCostField);
     }
 
-    // Check if an appearance was selected.
-    String appearanceStr = mAppearanceBox.getSelectionModel().getSelectedItem();
-    if (appearanceStr == null) {
-      validData = false;
-    }
-    // Check if a main attack was selected.
-    String mainAttackStr = mMainAttackBox.getSelectionModel().getSelectedItem();
-    if (mainAttackStr == null) {
-      validData = false;
-    }
-    // Check if a special attack was selected.
-    String specialAttackStr = mSpecialAttackBox.getSelectionModel().getSelectedItem();
-    if (specialAttackStr == null) {
-      validData = false;
-    }
+    // TODO Check if skills were created.
+    validData = false;
 
     if (validData) {
       // Adds character to mCharacters arrayList
@@ -280,15 +252,9 @@ public class CreationScene extends SceneManager {
       character.setName(charaName);
       character.setHealth(Integer.parseInt(healthStr));
 
-      character.setAttackName(mainAttackStr);
-      character.setSkillName(specialAttackStr);
       character.setCost(Integer.parseInt(costStr));
-      // TODO Character Image
+      // TODO Character skills
       
-      // TEMP TODO
-      character.setImage(appearanceStr);
-      character.setImageAttack(mainAttackStr);
-      character.setImageSkill(specialAttackStr);
       // Upload character.
       mDatabaseManager.uploadCharacter(character);
 
@@ -298,9 +264,6 @@ public class CreationScene extends SceneManager {
       mDefenseField.clear();
       mStrengthField.clear();
       mCostField.clear();
-      mMainAttackBox.getSelectionModel().clearSelection();
-      mSpecialAttackBox.getSelectionModel().clearSelection();
-      mAppearanceBox.getSelectionModel().clearSelection();
 
       // Outputs information for all characters stored in the mCharacters arrayList
       for (Character i : mDatabaseManager.getCharacters()) {

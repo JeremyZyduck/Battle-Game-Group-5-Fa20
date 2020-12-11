@@ -182,6 +182,7 @@ public class NewSkillScene extends SceneManager {
     }
     
     if (isValid) {
+      // TODO fix
       // Upload the skill to the database.
       mDatabaseManager.uploadSkill(new Skill(mNameField.getText(), mTypeBox.getValue(), 
           Integer.parseInt(mPowerField.getText()), im));

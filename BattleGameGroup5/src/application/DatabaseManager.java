@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -26,14 +27,8 @@ import javafx.scene.image.Image;
 public class DatabaseManager {
   // Connection to the database.
   private Connection mConnection;
-  // Current skills in the database.
-  private ArrayList<Skill> mIdleSkills;
-  // Current normal skills in the database.
-  private ArrayList<Skill> mNormalSkills;
-  // Current special skills in the database.
-  private ArrayList<Skill> mSpecialSkills;
   // ArrayList of characters
-  private ArrayList<Character> mCharacters;
+  private HashMap<Integer, Character> mCharacters;
 
   /**
    * Attempts to connect to the database. Returns false if failed, true if
@@ -49,8 +44,7 @@ public class DatabaseManager {
       System.out.println("Connected with the database successfully");
 
       // Pull some data from the database right away.
-      pullSkillsFromDatabase();
-      pullCharactersFromDatabase();
+      pullCharacterInfoFromDatabase();
 
       return true;
     } catch (Exception e) {
@@ -61,103 +55,144 @@ public class DatabaseManager {
   }
 
   /**
-   * Pulls skills from the database.
+   * Pulls character info and theirs skill from the database.
    */
-  private void pullSkillsFromDatabase() {
-    // Initialize skills list.
-    mIdleSkills = new ArrayList<Skill>();
-    mNormalSkills = new ArrayList<Skill>();
-    mSpecialSkills = new ArrayList<Skill>();
+  private void pullCharacterInfoFromDatabase() {
+    // Initialize the characters list.
+    mCharacters = new HashMap<Integer, Character>();
 
     try {
       // Query for attacks.
       Statement state = mConnection.createStatement();
-      String query = "SELECT * FROM attack";
+      String query = "SELECT ch.characterID, ch.characterName, ch.health, ch.strength, ch.defense, ch.cost, j.attackTypeID, j.attackName, j.imageBlob "
+          + "FROM characterInfo ch "
+          + "JOIN (SELECT atk.characterID, atk.imageID, atk.attackTypeID,  img.attackName, img.imageBlob "
+          + "FROM characterAttack atk " + "JOIN attackImage img " + "WHERE img.imageID = atk.imageID) j "
+          + "WHERE ch.characterID = j.characterID;";
       ResultSet rs = state.executeQuery(query);
 
       // Iterate over all rows.
       while (rs.next()) {
-        // Get data.
-        String idleID = rs.getNString("idleImageID");
-        String normalID = rs.getNString("normalAttackID");
-        String specialID = rs.getNString("specialAttackID");
-        Blob idleBlob = rs.getBlob("idleImage");
-        Blob normalBlob = rs.getBlob("normalImage");
-        Blob specialBlob = rs.getBlob("specialImage");
-        // Convert blobs to buffered images.
-        Image idleImage = null;
-        Image normalImage = null;
-        Image specialImage = null;
-        if (idleBlob != null) {
-          idleImage = new Image(idleBlob.getBinaryStream());
-        }
-        if (normalBlob != null) {
-          normalImage = new Image(normalBlob.getBinaryStream());
-        }
-        if (specialBlob != null) {
-          specialImage = new Image(specialBlob.getBinaryStream());
-        }
-        // Create the skill with appropriate data.
-        mIdleSkills.add(new Skill(idleID, SkillType.IDLE, 0, idleImage));
-        mNormalSkills.add(new Skill(normalID, SkillType.NORMAL, 1, normalImage));
-        mSpecialSkills.add(new Skill(specialID, SkillType.SPECIAL, 1, specialImage));
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Pull characters from database.
-   */
-  private void pullCharactersFromDatabase() {
-    // Initialize the characters list.
-    mCharacters = new ArrayList<Character>();
-
-    try {
-      // Query for characters.
-      Statement state = mConnection.createStatement();
-      String query = "SELECT * FROM characterinfo";
-      ResultSet rs = state.executeQuery(query);
-
-      // Iterate over all rows.
-      while (rs.next()) {
-        // Get data.
         int characterID = rs.getInt("characterID");
         String characterName = rs.getNString("characterName");
-        String idleImageID = rs.getNString("idleImageID");
-        String normalAttackID = rs.getNString("idleImageID");
-        String specialAttackID = rs.getNString("specialAttackID");
+        int health = rs.getInt("health");
+        int strength = rs.getInt("strength");
+        int defense = rs.getInt("defense");
+        int cost = rs.getInt("cost");
+        String attackTypeID = rs.getNString("attackTypeID");
+        String attackName = rs.getNString("attackName");
+        Blob imageBlob = rs.getBlob("imageBlob");
 
-        // Create the character with appropriate data.
-        Character newChar = new Character();
-        newChar.setName(characterName);
-        newChar.setImage(idleImageID);
-        newChar.setImageAttack(normalAttackID);
-        newChar.setImageSkill(specialAttackID);
-        mCharacters.add(newChar);
+        // Convert blob to image.
+        Image attackImage = null;
+        if (imageBlob != null) {
+          attackImage = new Image(imageBlob.getBinaryStream());
+        }
+
+        // Convert the attackTypeID to skillType.
+        SkillType skillType = null;
+        switch (attackTypeID) {
+        case "idle":
+          skillType = SkillType.IDLE;
+          break;
+        case "normal":
+          skillType = SkillType.NORMAL;
+          break;
+        case "special":
+          skillType = SkillType.SPECIAL;
+          break;
+        default:
+          System.out.println(
+              "Unrecognized attackTypeID [" + attackTypeID + "] in DatabaseManager.pullCharacterInfoFromDatabase()");
+          break;
+        }
+        // Create the new skill.
+        Skill newSkill = null;
+        if (skillType != null) {
+          newSkill = new Skill(attackName, skillType, 0, attackImage);
+        }
+
+        // Add the skill to the existing character.
+        Character existChar = mCharacters.get(characterID);
+        // If the character doesn't exist yet, make them exist.
+        if (existChar == null) {
+          existChar = new Character();
+          existChar.setName(characterName);
+          existChar.setHealth(health);
+          existChar.setStrength(strength);
+          existChar.setDefense(defense);
+          existChar.setCost(cost);
+          mCharacters.put(characterID, existChar);
+        }
+        switch (skillType) {
+        case IDLE:
+          existChar.setIdleSkill(newSkill);
+          break;
+        case NORMAL:
+          existChar.setNormalSkill(newSkill);
+          break;
+        case SPECIAL:
+          existChar.setSpecialSkill(newSkill);
+          break;
+        default:
+          if (skillType != null) {
+            System.out.println(
+                "Unrecognized skillType [" + skillType + "] in DatabaseManager.pullCharacterInfoFromDatabase()");
+          }
+          break;
+        }
       }
-
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   /**
-   * Uploads a character to the database.
+   * Uploads a character to the database. TODO FIX
    * 
    * @param character Character to be uploaded to the database.
-   * @return boolean True if the character was added to the database or false if not.
+   * @return boolean True if the character was added to the database or false if
+   *         not.
    */
   public boolean uploadCharacter(Character character) {
+    /*
+     * try { // Check if there are characters in the database. If there are, then
+     * increment // off the max. // Otherwise start at 1. Statement charAmCheckState
+     * = mConnection.createStatement(); String charAmCheckQuery = "SELECT COUNT(*) "
+     * + "FROM characterinfo c;"; ResultSet rs =
+     * charAmCheckState.executeQuery(charAmCheckQuery); rs.next(); // Get the
+     * amount. int charAm = rs.getInt("COUNT(*)"); // Set the amount string. String
+     * idStr = "1"; if (charAm > 0) { idStr = "(SELECT MAX(c.characterID) " +
+     * "FROM characterinfo c) + 1"; }
+     * 
+     * // Create the query to add characters. Statement state =
+     * mConnection.createStatement(); String query = "INSERT INTO characterinfo " +
+     * "VALUES (" + idStr + ", " + "'" + character.getName() + "', " + "'" +
+     * character.getImage() + "', " + "'" + character.getImageAttack() + "', " + "'"
+     * + character.getImageSkill() + "');"; state.executeUpdate(query);
+     * 
+     * } catch (Exception e) { e.printStackTrace(); return false; }
+     * 
+     * mCharacters.add(character);
+     */
+    return true;
+  }
+
+  /**
+   * Uploads a skill/attack to the database. TODO FIX/REMOVE
+   * 
+   * @param skill - Skill to upload to the database.
+   * @return boolean True if the character was added to the database or false if
+   *         not.
+   */
+  public boolean uploadSkill(Skill skill) {
 
     try {
-      // Check if there are characters in the database. If there are, then increment off the max.
+      // Check if there are skills in the database. If there are, then increment
+      // off the max.
       // Otherwise start at 1.
       Statement charAmCheckState = mConnection.createStatement();
-      String charAmCheckQuery = "SELECT COUNT(*) "
-          + "FROM characterinfo c;";
+      String charAmCheckQuery = "SELECT COUNT(*) " + "FROM attackImage i;";
       ResultSet rs = charAmCheckState.executeQuery(charAmCheckQuery);
       rs.next();
       // Get the amount.
@@ -165,90 +200,30 @@ public class DatabaseManager {
       // Set the amount string.
       String idStr = "1";
       if (charAm > 0) {
-        idStr = "(SELECT MAX(c.characterID) "
-            + "FROM characterinfo c) + 1";
-      } 
+        idStr = "(SELECT MAX(i.imageID) " + "FROM attackImage i) + 1";
+      }
 
       // Create the query to add characters.
-      Statement state = mConnection.createStatement();
-      String query = "INSERT INTO characterinfo "
-          + "VALUES (" + idStr + ", "
-          + "'" + character.getName() + "', "
-          + "'" + character.getImage() + "', "
-          + "'" + character.getImageAttack() + "', "
-          + "'" + character.getImageSkill() + "');";
-      state.executeUpdate(query);
+      PreparedStatement state = mConnection.prepareStatement("INSERT INTO attackImage VALUES (?,?,?)");
 
-    } catch (Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-
-    mCharacters.add(character);
-    return true;
-  }
- 
-  /**
-   * Uploads a skill/attack to the database.
-   * 
-   * @param skill - Skill to upload to the database.
-   * @return boolean True if the character was added to the database or false if not.
-   */
-  public boolean uploadSkill(Skill skill) {
-    
-    try {
-      // Create the query to add characters.
-      PreparedStatement state = mConnection.prepareStatement("INSERT INTO attack VALUES (?,?,?,?,?,?)");
-      state.setString(1, skill.getName());
-      state.setString(2, skill.getName());
-      state.setString(3, skill.getName());
-      
+      // Set primary key.
+      state.setInt(1, 10);
+      // Set blob image.
       BufferedImage bImg = SwingFXUtils.fromFXImage(skill.getImage(), null);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ImageIO.write(bImg, "png", baos);
       InputStream is = new ByteArrayInputStream(baos.toByteArray());
-      
-      state.setBlob(4, is);
-      state.setBlob(5, is);
-      state.setBlob(6, is);
-      
+      state.setBlob(2, is);
+      // Set skill name.
+      state.setString(3, skill.getName());
+
       state.execute();
     } catch (Exception e) {
       e.printStackTrace();
       return false;
     }
-    
-    mIdleSkills.add(skill);
-    mNormalSkills.add(skill);
-    mSpecialSkills.add(skill);
+
     return true;
-  }
-
-  /**
-   * Returns the idle skills from the database.
-   * 
-   * @return List<Skill> Idle skills in the database.
-   */
-  public ArrayList<Skill> getIdleSkills() {
-    return mIdleSkills;
-  }
-
-  /**
-   * Returns the normal skills from the database.
-   * 
-   * @return List<Skill> Normal skills in the database.
-   */
-  public ArrayList<Skill> getNormalSkills() {
-    return mNormalSkills;
-  }
-
-  /**
-   * Returns the special skills from the database.
-   * 
-   * @return List<Skill> Special skills in the database.
-   */
-  public ArrayList<Skill> getSpecialSkills() {
-    return mSpecialSkills;
   }
 
   /**
@@ -257,7 +232,12 @@ public class DatabaseManager {
    * @return List<Character> Characters in the database.
    */
   public ArrayList<Character> getCharacters() {
-    return mCharacters;
+    ArrayList<Character> list = new ArrayList<Character>(mCharacters.size());
+    for (Integer i : mCharacters.keySet()) {
+      list.add(mCharacters.get(i));
+    }
+
+    return list;
   }
 
   /**

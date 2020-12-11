@@ -84,22 +84,14 @@ public class CharacterListScene extends SceneManager {
   protected void onLoad() { 
     // Pull characters and idle skills from the database.
     ArrayList<Character> characters = mDatabaseManager.getCharacters();
-    ArrayList<Skill> idleSkills = mDatabaseManager.getIdleSkills();
     ArrayList<HBox> hBoxes = new ArrayList<HBox>(characters.size());
     for (Character c : characters) {
       // Name for the character.
       Label nameLabel = new Label(c.getName());
       setLabelToDefault(nameLabel, mPosition);
       
-      // TODO This is rather inefficient. Should probably have references to skills in
-      // character class that are set during the query.
       // Get the idle image for the character.
-      Image appearance = null;
-      for (Skill s : idleSkills) {
-        if (s.getName().equals(c.getImage())) {
-          appearance = s.getImage();
-        }
-      }
+      Image appearance = c.getIdleSkill().getImage();
       // Image for the character
       ImageView imageView = new ImageView();
       imageView.setFitHeight(ELEMENT_SPACE * 2);
