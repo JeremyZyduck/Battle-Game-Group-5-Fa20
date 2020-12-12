@@ -5,16 +5,17 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class CreationScene extends SceneManager {
   // Constants.
   // Name of the scene.
   public final static String TITLE = "Battle Game - Character Creation";
+
+  // Singleton
+  private static CreationScene instance = null;
 
   // Text fields to hold name, health, strength, defense, and cost of character.
   private TextField mNameField;
@@ -26,15 +27,31 @@ public class CreationScene extends SceneManager {
   private Label mIdleLabel;
   private Label mNormalLabel;
   private Label mSpecialLabel;
+  
+  // Character being created.
+  private Character mCharacter;
 
   /**
-   * Constructs the creation scene.
+   * Constructs the CreationScene.
    * 
-   * @param stage - Stage the scene will be on.
+   * @param stage   - Stage the scene will be on.
    * @param dataMan - Database manager.
    */
-  public CreationScene(Stage stage, DatabaseManager dataMan) {
-    super(stage, TITLE, dataMan);
+  private CreationScene() {
+    super(TITLE);
+    mCharacter = new Character();
+  }
+
+  /**
+   * Gets the singleton instance.
+   * 
+   * @return CreationScene singleton instance.
+   */
+  public static CreationScene getInstance() {
+    if (instance == null) {
+      instance = new CreationScene();
+    }
+    return instance;
   }
 
   /**
@@ -78,34 +95,55 @@ public class CreationScene extends SceneManager {
 
     // prompt for character appearance
     Label appearanceLabel = new Label("Select character idle:");
-    setLabelToDefault(appearanceLabel, position++);
+    setLabelToDefault(appearanceLabel, position);
     mIdleLabel = new Label("None");
+    setLabelToDefault(mIdleLabel, position++);
+    mIdleLabel.setPrefWidth(140);
     setFieldNextToLabel(mIdleLabel, appearanceLabel);
+    Button editIdleButton = new Button("Edit");
+    setFieldNextToLabel(editIdleButton, mIdleLabel);
+    editIdleButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        NewSkillScene.getInstance().setSkillType(SkillType.IDLE);
+        NewSkillScene.getInstance().swapToScene();
+      }
+    });
 
     // prompt for primary attack skill
     Label mainAttackLabel = new Label("Select primary attack skill:");
-    setLabelToDefault(mainAttackLabel, position++);
+    setLabelToDefault(mainAttackLabel, position);
     mNormalLabel = new Label("None");
+    setLabelToDefault(mNormalLabel, position++);
+    mNormalLabel.setPrefWidth(140);
     setFieldNextToLabel(mNormalLabel, mainAttackLabel);
+    Button editAttackButton = new Button("Edit");
+    setFieldNextToLabel(editAttackButton, mNormalLabel);
+    editAttackButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        NewSkillScene.getInstance().setSkillType(SkillType.NORMAL);
+        NewSkillScene.getInstance().swapToScene();
+      }
+    });
 
     // prompt for secondary attack skill
     Label specialAttackLabel = new Label("Select secondary attack skill:");
-    setLabelToDefault(specialAttackLabel, position++);
+    setLabelToDefault(specialAttackLabel, position);
     mSpecialLabel = new Label("None");
+    setLabelToDefault(mSpecialLabel, position++);
+    mSpecialLabel.setPrefWidth(140);
     setFieldNextToLabel(mSpecialLabel, specialAttackLabel);
-
-    // Prompt to create a new skill
-    Label newSkillLabel = new Label("Create new skill/idle: ");
-    setLabelToDefault(newSkillLabel, position++);
-    Button newSkillButton = new Button("New Skill");
-    setFieldNextToLabel(newSkillButton, newSkillLabel);
-    // When the button is pressed, open a skill creation menu.
-    newSkillButton.setOnAction(new EventHandler<ActionEvent>() {
+    Button editSpecialButton = new Button("Edit");
+    setFieldNextToLabel(editSpecialButton, mSpecialLabel);
+    editSpecialButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
-      public void handle(ActionEvent arg0) {
-        swapToLink(NewSkillScene.TITLE);
+      public void handle(ActionEvent event) {
+        NewSkillScene.getInstance().setSkillType(SkillType.SPECIAL);
+        NewSkillScene.getInstance().swapToScene();
       }
     });
+
 
     // Prompt for character cost
     Label costLabel = new Label("Input character cost:");
@@ -144,7 +182,7 @@ public class CreationScene extends SceneManager {
         submitCharacterInfo();
       }
     });
-    
+
     Button backButton = new Button("Back");
     backButton.setStyle("-fx-font-size:15");
     backButton.setFont(new Font(40));
@@ -156,25 +194,61 @@ public class CreationScene extends SceneManager {
     backButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent arg0) {
-        swapToLink(CharacterListScene.TITLE);
+        CharacterListScene.getInstance().swapToScene();
       }
     });
 
     // creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, strengthLabel, mStrengthField, defenseLabel,
-        mDefenseField, appearanceLabel, mIdleLabel, newSkillLabel, newSkillButton, mainAttackLabel, mNormalLabel,
-        specialAttackLabel, mSpecialLabel, costLabel, mCostField, submitButton, clearButton, backButton);
+        mDefenseField, appearanceLabel, mIdleLabel, mainAttackLabel, mNormalLabel,
+        specialAttackLabel, mSpecialLabel, costLabel, mCostField, submitButton, clearButton, backButton,
+        editIdleButton, editAttackButton, editSpecialButton);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }
-  
+
   /**
    * 
    */
   @Override
   protected void onLoad() {
-    // TODO change how this works. Get the currently selected character if any.
+    // Get the currently selected character if any.
     // And then change the labels to that characters things.
+    String idleName = "None";
+    if (mCharacter.getIdleSkill() != null) {
+      idleName = mCharacter.getIdleSkill().getName();
+      if (idleName.equals("")) {
+        idleName = "None";
+      }
+    }
+    mIdleLabel.setText(idleName);
+    
+    String normalName = "None";
+    if (mCharacter.getNormalSkill() != null) {
+      normalName = mCharacter.getNormalSkill().getName();
+      if (normalName.equals("")) {
+        normalName = "None";
+      }
+    }
+    mNormalLabel.setText(normalName);
+    
+    String specialName = "None";
+    if (mCharacter.getSpecialSkill() != null) {
+      specialName = mCharacter.getSpecialSkill().getName();
+      if (specialName.equals("")) {
+        specialName = "None";
+      }
+    }
+    mSpecialLabel.setText(specialName);
+  }
+  
+  /**
+   * Returns the current character being created.
+   * 
+   * @return Character.
+   */
+  public Character getCharacter() {
+    return mCharacter;
   }
 
   /**
@@ -243,21 +317,28 @@ public class CreationScene extends SceneManager {
       setTextFieldBackgroundRed(mCostField);
     }
 
-    // TODO Check if skills were created.
-    validData = false;
+    // Check if skills were created.
+    if (mCharacter.getIdleSkill() == null || mCharacter.getNormalSkill() == null
+        || mCharacter.getSpecialSkill() == null) {
+      validData = false;
+    }
 
     if (validData) {
       // Adds character to mCharacters arrayList
-      Character character = new Character();
-      character.setName(charaName);
-      character.setHealth(Integer.parseInt(healthStr));
+      mCharacter.setName(charaName);
+      mCharacter.setHealth(Integer.parseInt(healthStr));
+      mCharacter.setStrength(Integer.parseInt(strengthStr));
+      mCharacter.setDefense(Integer.parseInt(defenseStr));
+      mCharacter.setCost(Integer.parseInt(costStr));
 
-      character.setCost(Integer.parseInt(costStr));
-      // TODO Character skills
-      
       // Upload character.
-      mDatabaseManager.uploadCharacter(character);
+      mDatabaseManager.uploadCharacter(mCharacter);
 
+      // Reset the character.
+      mCharacter = new Character();
+      // Call onLoad to get rid of the skills.
+      onLoad();
+      
       // Clears all fields
       mNameField.clear();
       mHealthField.clear();

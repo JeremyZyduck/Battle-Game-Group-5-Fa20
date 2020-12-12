@@ -81,7 +81,10 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
    */
   public Image getAnimation() {
     try {
-      return new Image(mFile.toURI().toURL().toExternalForm());
+      if (mFile != null) {
+        return new Image(mFile.toURI().toURL().toExternalForm());
+      }
+      return null;
     } catch (Exception e) {
       e.printStackTrace();
       return null;

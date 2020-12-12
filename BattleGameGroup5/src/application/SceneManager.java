@@ -1,7 +1,5 @@
 package application;
 
-import java.util.HashMap;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -32,26 +30,31 @@ public abstract class SceneManager {
   // Scene to show.
   private Scene mScene;
   // Stage the scene will be on.
-  private Stage mStage;
+  protected Stage mStage;
   // Title of the scene.
   private String mTitle;
   // Database manager reference.
   protected DatabaseManager mDatabaseManager;
-  
-  // References to other scenes that can be swapped to.
-  private HashMap<String, SceneManager> links;
 
   /**
    * Constructs a scene manager. Calls the createScene helper function.
    * 
    * @param title String title of the scene.
    */
-  public SceneManager(Stage stage, String title, DatabaseManager dataMan) {
+  public SceneManager(String title) {
+    mTitle = title;
+    mScene = createScene();
+  }
+  
+  /**
+   * Sets the scene and database manager.
+   * 
+   * @param stage   - Stage the scene will be on.
+   * @param dataMan - DatabaseManager reference.
+   */
+  public void initialize(Stage stage, DatabaseManager dataMan) {
     mStage = stage;
     mDatabaseManager = dataMan;
-    mTitle = title;
-    links = new HashMap<String, SceneManager>();
-    mScene = createScene();
   }
 
   /**
@@ -76,31 +79,6 @@ public abstract class SceneManager {
    * Meant to be overridden by children.
    */
   protected void onLoad() { }
-  
-  /**
-   * Adds a link to this scene.
-   * 
-   * @param scene Scene where the link goes.
-   */
-  public void addLink(SceneManager scene) {
-    links.put(scene.getTitle(), scene);
-  }
-  
-  /**
-   * Swaps the scene to the given link.
-   * 
-   * @param linkKey Key to the link.
-   * @return boolean - returns false if the link key was invalid and the scene was not swapped.
-   */
-  protected boolean swapToLink(String linkKey) {
-    SceneManager scene = links.get(linkKey);
-    if (scene != null) {
-      scene.swapToScene();
-      return true;
-    }
-    
-    return false;
-  }
 
   /**
    * Sets the given label's font, width, and layout to the determined defaults.
@@ -124,7 +102,7 @@ public abstract class SceneManager {
    */
   protected void setFieldNextToLabel(Node field, Label label) {
     field.setLayoutY(label.getLayoutY());
-    field.setLayoutX(label.getPrefWidth());
+    field.setLayoutX(label.getPrefWidth() + label.getLayoutX());
   }
 
   /**

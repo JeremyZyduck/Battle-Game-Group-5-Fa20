@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -22,22 +21,37 @@ public class CharacterListScene extends SceneManager {
   private final static int SCENE_WIDTH = ELEMENT_SPACE * 15;
   // The default height of the scene.
   private final static int SCENE_HEIGHT = ELEMENT_SPACE * 10;
-  
+
+  // Singleton
+  private static CharacterListScene instance = null;
+
   // Scroll bar.
   private ScrollPane mScrollPane;
   // VBox of elements in the scene.
   private VBox mVBox;
   // Position in the scene of the last element.
   private int mPosition;
-  
+
   /**
    * Constructs the CharacterListScene.
    * 
-   * @param stage - Stage the scene will be on.
+   * @param stage   - Stage the scene will be on.
    * @param dataMan - Database manager.
    */
-  public CharacterListScene(Stage stage, DatabaseManager dataMan) {
-    super(stage, TITLE, dataMan);
+  private CharacterListScene() {
+    super(TITLE);
+  }
+
+  /**
+   * Gets the singleton instance.
+   * 
+   * @return CharacterListScene singleton instance.
+   */
+  public static CharacterListScene getInstance() {
+    if (instance == null) {
+      instance = new CharacterListScene();
+    }
+    return instance;
   }
 
   /**
@@ -47,49 +61,49 @@ public class CharacterListScene extends SceneManager {
   protected Scene createScene() {
     // Keeps track of the position.
     mPosition = 0;
-    
+
     // Headers for name and appearance.
     Label nameHeaderLabel = new Label("Character Name");
     setLabelToDefault(nameHeaderLabel, mPosition++);
     Label appearHeaderLabel = new Label("Appearance");
     setLabelToDefault(appearHeaderLabel, 0);
     setFieldNextToLabel(appearHeaderLabel, nameHeaderLabel);
-    
+
     // Scroll box
     mVBox = new VBox();
     mVBox.setMaxWidth(SCENE_WIDTH);
     mScrollPane = new ScrollPane(mVBox);
     mScrollPane.setFitToWidth(true);
-    
+
     // Create a border pan for the scene that contains the scroll pane.
     BorderPane borderPane = new BorderPane(mScrollPane);
     borderPane.setPadding(new Insets(15));
-    
+
     // Set the headers at the top
     borderPane.setTop(new HBox(nameHeaderLabel, appearHeaderLabel));
-    
+
     // A button for creating a new character.
     Button newButton = new Button("New Character");
-    newButton.setOnAction(ev -> this.swapToLink(CreationScene.TITLE));
+    newButton.setOnAction(ev -> CreationScene.getInstance().swapToScene());
     borderPane.setBottom(newButton);
 
     return new Scene(borderPane, SCENE_WIDTH, SCENE_HEIGHT);
   }
-  
+
   /**
-   * Does things on loading into the new scene.
-   * Adds additional fields to display characters from the database.
+   * Does things on loading into the new scene. Adds additional fields to display
+   * characters from the database.
    */
   @Override
-  protected void onLoad() { 
-    // Pull characters and idle skills from the database.
+  protected void onLoad() {
+    // Pull characters from the database.
     ArrayList<Character> characters = mDatabaseManager.getCharacters();
     ArrayList<HBox> hBoxes = new ArrayList<HBox>(characters.size());
     for (Character c : characters) {
       // Name for the character.
       Label nameLabel = new Label(c.getName());
       setLabelToDefault(nameLabel, mPosition);
-      
+
       // Get the idle image for the character.
       Image appearance = c.getIdleSkill().getImage();
       // Image for the character
@@ -99,9 +113,9 @@ public class CharacterListScene extends SceneManager {
       imageView.setPreserveRatio(true);
       imageView.setImage(appearance);
       setFieldNextToLabel(imageView, nameLabel);
-      
-      mPosition+=2;
-      
+
+      mPosition += 2;
+
       // Edit button for character.
       Button editButt = new Button("Edit");
       editButt.setOnAction(ev -> System.out.println("EDIT not yet implemented"));
@@ -109,15 +123,15 @@ public class CharacterListScene extends SceneManager {
       editButt.setLayoutX(imageView.getLayoutX() + ELEMENT_SPACE * 3);
       // Delete button for character.
       Button delButt = new Button("Delete");
-      delButt.setOnAction(ev -> System.out.println("DELETE not yet implemented"));
+      delButt.setOnAction(ev -> mDatabaseManager.deleteCharacter(c));
       setFieldNextToLabel(delButt, nameLabel);
       delButt.setLayoutX(imageView.getLayoutX() + ELEMENT_SPACE * 5);
-      
+
       // Add all the elements of each row to an hBox.
       hBoxes.add(new HBox(nameLabel, imageView, editButt, delButt));
     }
     mPosition++;
-    
+
     // Clear the VBox.
     mVBox.getChildren().clear();
     // Add all the hBoxes to the scene.

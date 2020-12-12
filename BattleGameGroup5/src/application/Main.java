@@ -6,15 +6,6 @@ import javafx.stage.Stage;
 public class Main extends Application {
   // Database manager
   private DatabaseManager mDatabaseManager;
-  
-  // Scene to log in to the database.
-  private DatabaseLoginScene mDatabaseLoginScene;
-  // Main scene for creating the characters.
-  private CreationScene mCreationScene;
-  // Scene for creating a new skill.
-  private NewSkillScene mSkillScene;
-  // Scene for viewing all the created characters.
-  private CharacterListScene mCharacterListScene;
 
   /**
    * Starts the application.
@@ -27,8 +18,7 @@ public class Main extends Application {
     
     // Create the scenes, give them links to one another, and open the first scene.
     createScenes(primaryStage);
-    establishLinks();
-    mDatabaseLoginScene.swapToScene();
+    DatabaseLoginScene.getInstance().swapToScene();
   }
 
   public static void main(String[] args) {
@@ -42,24 +32,9 @@ public class Main extends Application {
    * @param stage - Stage the scenes will load onto.
    */
   private void createScenes(Stage stage) {
-    mDatabaseLoginScene = new DatabaseLoginScene(stage, mDatabaseManager);
-    mCreationScene = new CreationScene(stage, mDatabaseManager);
-    mSkillScene = new NewSkillScene(stage, mDatabaseManager);
-    mCharacterListScene = new CharacterListScene(stage, mDatabaseManager);
-  }
-  
-  /**
-   * Establishes links between the scenes.
-   */
-  private void establishLinks() {
-    // DatabaseLoginScene links.
-    mDatabaseLoginScene.addLink(mCharacterListScene);
-    // CreationScene links.
-    mCreationScene.addLink(mSkillScene);
-    mCreationScene.addLink(mCharacterListScene);
-    // SkillScene links.
-    mSkillScene.addLink(mCreationScene);
-    // Character list links.
-    mCharacterListScene.addLink(mCreationScene);
+    DatabaseLoginScene.getInstance().initialize(stage, mDatabaseManager);
+    CreationScene.getInstance().initialize(stage, mDatabaseManager);
+    NewSkillScene.getInstance().initialize(stage, mDatabaseManager);
+    CharacterListScene.getInstance().initialize(stage, mDatabaseManager);
   }
 }

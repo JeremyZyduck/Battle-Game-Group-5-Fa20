@@ -10,25 +10,39 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class DatabaseLoginScene extends SceneManager {
   // Constants.
   // Name of the scene.
   public final static String TITLE = "Battle Game - Character Creation - Database Login";
 
+  // Singleton
+  private static DatabaseLoginScene instance = null;
+  
   // Text fields for database credentials scene.
   private TextField mDataUserField;
   private PasswordField mDataPassField;
 
   /**
-   * Constructs a DatabaseLoginScene.
+   * Constructs the DatabaseLoginScene.
    * 
-   * @param stage   Stage the scene will be on.
-   * @param dataMan Reference to the database manager.
+   * @param stage   - Stage the scene will be on.
+   * @param dataMan - Database manager.
    */
-  public DatabaseLoginScene(Stage stage, DatabaseManager dataMan) {
-    super(stage, TITLE, dataMan);
+  private DatabaseLoginScene() {
+    super(TITLE);
+  }
+
+  /**
+   * Gets the singleton instance.
+   * 
+   * @return DatabaseLoginScene singleton instance.
+   */
+  public static DatabaseLoginScene getInstance() {
+    if (instance == null) {
+      instance = new DatabaseLoginScene();
+    }
+    return instance;
   }
 
   /**
@@ -70,7 +84,7 @@ public class DatabaseLoginScene extends SceneManager {
       public void handle(ActionEvent event) {
         if (mDatabaseManager.connectToDatabase(mDataUserField.getText(), mDataPassField.getText())) {
           invalidInfoLabel.setVisible(false);
-          swapToLink(CharacterListScene.TITLE);
+          CharacterListScene.getInstance().swapToScene();
         } else {
           invalidInfoLabel.setVisible(true);
           checkValidDatabseAccountEntry();

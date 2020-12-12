@@ -16,9 +16,12 @@ public class Character {
   private int mDefense;
   private String mAttackName;
   private String mSkillName;
+  // Character skills.
   private Skill mIdleSkill;
   private Skill mNormalSkill;
   private Skill mSpecialSkill;
+  // Primary key of the character on the database.
+  private int mKey;
 
   // setters
   public void setName(String name) {
@@ -72,6 +75,10 @@ public class Character {
   public void setSpecialSkill(Skill skill) {
     this.mSpecialSkill = skill;
   }
+  
+  public void setKey(int key) {
+    this.mKey = key;
+  }
 
   // getters
   public String getName() {
@@ -97,6 +104,14 @@ public class Character {
   public int getHealth() {
     return mHealth;
   }
+  
+  public int getStrength() {
+    return mStrength;
+  }
+  
+  public int getDefense() {
+    return mDefense;
+  }
 
   public String getAttackName() {
     return mAttackName;
@@ -117,6 +132,10 @@ public class Character {
   public Skill getSpecialSkill() {
     return mSpecialSkill;
   }
+  
+  public int getKey() {
+    return mKey;
+  }
 
   public void printAll() {
     System.out.println("Name: " + mName);
@@ -124,6 +143,7 @@ public class Character {
     System.out.println("Attack Name: " + mAttackName);
     System.out.println("Skill Name: " + mSkillName);
     System.out.println("Cost: " + mCost);
+    System.out.println("Key:" +mKey);
   }
 
 }
