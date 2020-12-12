@@ -1,3 +1,0 @@
-SELECT characterName, G5AgileExperience.character.characterID, username
-FROM G5AgileExperience.character
-JOIN G5AgileExperience.account ON G5AgileExperience.account.characterID = G5AgileExperience.character.characterID
