@@ -8,20 +8,30 @@ public class Character {
   // Private variables
   private String mName;
   private int mCost; // How much the character will cost
-  private String mImage; // Character images will reference a link to an image stored on the web server
-  private String mImageAttack;
-  private String mImageSkill;
   private int mHealth;
   private int mStrength;
   private int mDefense;
-  private String mAttackName;
-  private String mSkillName;
   // Character skills.
   private Skill mIdleSkill;
   private Skill mNormalSkill;
   private Skill mSpecialSkill;
   // Primary key of the character on the database.
   private int mKey;
+
+  /**
+   * Constructs a character.
+   */
+  public Character() {
+    mName = "";
+    mCost = 0;
+    mHealth = 0;
+    mStrength = 0;
+    mDefense = 0;
+    mIdleSkill = null;
+    mNormalSkill = null;
+    mSpecialSkill = null;
+    mKey = -1;
+  }
 
   // setters
   public void setName(String name) {
@@ -30,18 +40,6 @@ public class Character {
 
   public void setCost(int cost) {
     this.mCost = cost;
-  }
-
-  public void setImage(String image) {
-    this.mImage = image;
-  }
-
-  public void setImageAttack(String imageAttack) {
-    this.mImageAttack = imageAttack;
-  }
-
-  public void setImageSkill(String imageSkill) {
-    this.mImageSkill = imageSkill;
   }
 
   public void setHealth(int health) {
@@ -53,15 +51,7 @@ public class Character {
   }
 
   public void setDefense(int defense) {
-    this.mHealth = defense;
-  }
-
-  public void setAttackName(String attackName) {
-    this.mAttackName = attackName;
-  }
-
-  public void setSkillName(String skillName) {
-    this.mSkillName = skillName;
+    this.mDefense = defense;
   }
 
   public void setIdleSkill(Skill skill) {
@@ -75,7 +65,7 @@ public class Character {
   public void setSpecialSkill(Skill skill) {
     this.mSpecialSkill = skill;
   }
-  
+
   public void setKey(int key) {
     this.mKey = key;
   }
@@ -89,36 +79,16 @@ public class Character {
     return mCost;
   }
 
-  public String getImage() {
-    return mImage;
-  }
-
-  public String getImageAttack() {
-    return mImageAttack;
-  }
-
-  public String getImageSkill() {
-    return mImageSkill;
-  }
-
   public int getHealth() {
     return mHealth;
   }
-  
+
   public int getStrength() {
     return mStrength;
   }
-  
+
   public int getDefense() {
     return mDefense;
-  }
-
-  public String getAttackName() {
-    return mAttackName;
-  }
-
-  public String getSkillName() {
-    return mSkillName;
   }
 
   public Skill getIdleSkill() {
@@ -132,18 +102,18 @@ public class Character {
   public Skill getSpecialSkill() {
     return mSpecialSkill;
   }
-  
+
   public int getKey() {
     return mKey;
   }
 
   public void printAll() {
     System.out.println("Name: " + mName);
-    System.out.println("Health: " + mHealth);
-    System.out.println("Attack Name: " + mAttackName);
-    System.out.println("Skill Name: " + mSkillName);
     System.out.println("Cost: " + mCost);
-    System.out.println("Key:" +mKey);
+    System.out.println("Health: " + mHealth);
+    System.out.println("Strength: " + mStrength);
+    System.out.println("Defense: " + mDefense);
+    System.out.println("Key:" + mKey);
   }
 
 }

@@ -2,6 +2,8 @@ package application;
 
 import java.util.ArrayList;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,7 +18,7 @@ import javafx.scene.layout.VBox;
 public class CharacterListScene extends SceneManager {
   // Constants.
   // Name of the scene.
-  public final static String TITLE = "Battle Game - Character List";
+  private final static String TITLE = "Battle Game - Character List";
   // The width of the scene.
   private final static int SCENE_WIDTH = ELEMENT_SPACE * 15;
   // The default height of the scene.
@@ -84,7 +86,13 @@ public class CharacterListScene extends SceneManager {
 
     // A button for creating a new character.
     Button newButton = new Button("New Character");
-    newButton.setOnAction(ev -> CreationScene.getInstance().swapToScene());
+    newButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        CreationScene.getInstance().setNewCharacter();
+        CreationScene.getInstance().swapToScene();
+      }
+    });
     borderPane.setBottom(newButton);
 
     return new Scene(borderPane, SCENE_WIDTH, SCENE_HEIGHT);
@@ -118,12 +126,18 @@ public class CharacterListScene extends SceneManager {
 
       // Edit button for character.
       Button editButt = new Button("Edit");
-      editButt.setOnAction(ev -> System.out.println("EDIT not yet implemented"));
+      editButt.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          CreationScene.getInstance().setCharacterInfo(c);
+          CreationScene.getInstance().swapToScene();
+        }
+      });
       setFieldNextToLabel(editButt, nameLabel);
       editButt.setLayoutX(imageView.getLayoutX() + ELEMENT_SPACE * 3);
       // Delete button for character.
       Button delButt = new Button("Delete");
-      delButt.setOnAction(ev -> mDatabaseManager.deleteCharacter(c));
+      delButt.setOnAction(ev -> deleteCharacter(c));
       setFieldNextToLabel(delButt, nameLabel);
       delButt.setLayoutX(imageView.getLayoutX() + ELEMENT_SPACE * 5);
 
@@ -138,5 +152,16 @@ public class CharacterListScene extends SceneManager {
     for (HBox box : hBoxes) {
       mVBox.getChildren().add(box);
     }
+  }
+
+  /**
+   * Deletes a character from the database and refreshes the page.
+   * 
+   * @param character - Character to delete from the database.
+   */
+  private void deleteCharacter(Character character) {
+    mDatabaseManager.deleteCharacter(character);
+    // Refresh the page.
+    onLoad();
   }
 }

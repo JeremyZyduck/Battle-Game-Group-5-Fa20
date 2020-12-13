@@ -15,7 +15,7 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     mDatabaseManager = new DatabaseManager();
-    
+
     // Create the scenes, give them links to one another, and open the first scene.
     createScenes(primaryStage);
     DatabaseLoginScene.getInstance().swapToScene();
@@ -24,10 +24,9 @@ public class Main extends Application {
   public static void main(String[] args) {
     Application.launch(args);
   }
-  
+
   /**
-   * Creates all the scenes.
-   * Helper function for start.
+   * Creates all the scenes. Helper function for start.
    * 
    * @param stage - Stage the scenes will load onto.
    */

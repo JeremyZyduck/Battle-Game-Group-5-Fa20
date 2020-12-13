@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 public class CreationScene extends SceneManager {
   // Constants.
   // Name of the scene.
-  public final static String TITLE = "Battle Game - Character Creation";
+  private final static String TITLE = "Battle Game - Character Creation";
 
   // Singleton
   private static CreationScene instance = null;
@@ -27,7 +27,7 @@ public class CreationScene extends SceneManager {
   private Label mIdleLabel;
   private Label mNormalLabel;
   private Label mSpecialLabel;
-  
+
   // Character being created.
   private Character mCharacter;
 
@@ -107,6 +107,9 @@ public class CreationScene extends SceneManager {
       public void handle(ActionEvent event) {
         NewSkillScene.getInstance().setSkillType(SkillType.IDLE);
         NewSkillScene.getInstance().swapToScene();
+        if (mCharacter.getIdleSkill() != null) {
+          NewSkillScene.getInstance().setSkillData(mCharacter.getIdleSkill());
+        }
       }
     });
 
@@ -124,6 +127,9 @@ public class CreationScene extends SceneManager {
       public void handle(ActionEvent event) {
         NewSkillScene.getInstance().setSkillType(SkillType.NORMAL);
         NewSkillScene.getInstance().swapToScene();
+        if (mCharacter.getNormalSkill() != null) {
+          NewSkillScene.getInstance().setSkillData(mCharacter.getNormalSkill());
+        }
       }
     });
 
@@ -141,9 +147,11 @@ public class CreationScene extends SceneManager {
       public void handle(ActionEvent event) {
         NewSkillScene.getInstance().setSkillType(SkillType.SPECIAL);
         NewSkillScene.getInstance().swapToScene();
+        if (mCharacter.getSpecialSkill() != null) {
+          NewSkillScene.getInstance().setSkillData(mCharacter.getSpecialSkill());
+        }
       }
     });
-
 
     // Prompt for character cost
     Label costLabel = new Label("Input character cost:");
@@ -200,20 +208,19 @@ public class CreationScene extends SceneManager {
 
     // creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, strengthLabel, mStrengthField, defenseLabel,
-        mDefenseField, appearanceLabel, mIdleLabel, mainAttackLabel, mNormalLabel,
-        specialAttackLabel, mSpecialLabel, costLabel, mCostField, submitButton, clearButton, backButton,
-        editIdleButton, editAttackButton, editSpecialButton);
+        mDefenseField, appearanceLabel, mIdleLabel, mainAttackLabel, mNormalLabel, specialAttackLabel, mSpecialLabel,
+        costLabel, mCostField, submitButton, clearButton, backButton, editIdleButton, editAttackButton,
+        editSpecialButton);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }
 
   /**
-   * 
+   * Update the skills labels to be the character's skills.
    */
   @Override
   protected void onLoad() {
-    // Get the currently selected character if any.
-    // And then change the labels to that characters things.
+    // Idle skill
     String idleName = "None";
     if (mCharacter.getIdleSkill() != null) {
       idleName = mCharacter.getIdleSkill().getName();
@@ -222,7 +229,8 @@ public class CreationScene extends SceneManager {
       }
     }
     mIdleLabel.setText(idleName);
-    
+
+    // Normal skill
     String normalName = "None";
     if (mCharacter.getNormalSkill() != null) {
       normalName = mCharacter.getNormalSkill().getName();
@@ -231,7 +239,8 @@ public class CreationScene extends SceneManager {
       }
     }
     mNormalLabel.setText(normalName);
-    
+
+    // Special skill
     String specialName = "None";
     if (mCharacter.getSpecialSkill() != null) {
       specialName = mCharacter.getSpecialSkill().getName();
@@ -241,7 +250,7 @@ public class CreationScene extends SceneManager {
     }
     mSpecialLabel.setText(specialName);
   }
-  
+
   /**
    * Returns the current character being created.
    * 
@@ -285,13 +294,6 @@ public class CreationScene extends SceneManager {
       validData = false;
       setTextFieldBackgroundRed(mNameField);
     }
-    // Test if the character name is unique
-    for (Character i : mDatabaseManager.getCharacters()) {
-      if (i.getName().equals(charaName)) {
-        validData = false;
-        setTextFieldBackgroundRed(mNameField);
-      }
-    }
     // Test if the entered health is an integer.
     String healthStr = mHealthField.getText();
     if (!validateNumberString(healthStr)) {
@@ -331,26 +333,97 @@ public class CreationScene extends SceneManager {
       mCharacter.setDefense(Integer.parseInt(defenseStr));
       mCharacter.setCost(Integer.parseInt(costStr));
 
-      // Upload character.
-      mDatabaseManager.uploadCharacter(mCharacter);
+      boolean wasSuccess = true;
+      // If the character is a new character.
+      if (mCharacter.getKey() == -1) {
+        wasSuccess = submitNewCharacterInfo();
+      }
+      // If the character is an existing character.
+      else {
+        submitExistingCharacterInfo();
+      }
 
-      // Reset the character.
-      mCharacter = new Character();
-      // Call onLoad to get rid of the skills.
-      onLoad();
-      
-      // Clears all fields
-      mNameField.clear();
-      mHealthField.clear();
-      mDefenseField.clear();
-      mStrengthField.clear();
-      mCostField.clear();
+      // If the character was successfully uploaded, reset things.
+      if (wasSuccess) {
+        // Reset the character.
+        mCharacter = new Character();
+        // Call onLoad to get rid of the skills.
+        onLoad();
 
-      // Outputs information for all characters stored in the mCharacters arrayList
-      for (Character i : mDatabaseManager.getCharacters()) {
-        i.printAll();
+        // Clears all fields
+        mNameField.clear();
+        mHealthField.clear();
+        mDefenseField.clear();
+        mStrengthField.clear();
+        mCostField.clear();
+
+        // Go back to the character list scene.
+        CharacterListScene.getInstance().swapToScene();
+
+        // Outputs information for all characters stored in the mCharacters arrayList
+        // for (Character i : mDatabaseManager.getCharacters()) {
+        // i.printAll();
+        // }
       }
     }
+  }
+
+  /**
+   * Submit new character info.
+   */
+  private boolean submitNewCharacterInfo() {
+    boolean isValid = true;
+
+    String charaName = mNameField.getText();
+    // Test if the character name is unique
+    for (Character i : mDatabaseManager.getCharacters()) {
+      if (i.getName().equals(charaName)) {
+        isValid = false;
+        setTextFieldBackgroundRed(mNameField);
+      }
+    }
+
+    if (isValid) {
+      // Upload character.
+      mDatabaseManager.uploadCharacter(mCharacter);
+    }
+
+    return isValid;
+  }
+
+  /**
+   * Submit info for existing character for update
+   */
+  private void submitExistingCharacterInfo() {
+    // Update character.
+    mDatabaseManager.updateCharacter(mCharacter);
+  }
+
+  /**
+   * Sets the current character to the given character. Updates fields to hold the
+   * character's info. Used when editing an existing character. Must be called
+   * before the scene is loaded.
+   * 
+   * @param character - Character being edited.
+   */
+  public void setCharacterInfo(Character character) {
+    mCharacter = character;
+
+    mNameField.setText(mCharacter.getName());
+    mHealthField.setText(String.valueOf(mCharacter.getHealth()));
+    mStrengthField.setText(String.valueOf(mCharacter.getStrength()));
+    mDefenseField.setText(String.valueOf(mCharacter.getDefense()));
+    mCostField.setText(String.valueOf(mCharacter.getCost()));
+  }
+
+  /**
+   * Creates a new character and sets it as the current character. Used when
+   * creating a new character. Must be called before the scene is loaded.
+   */
+  public void setNewCharacter() {
+    mCharacter = new Character();
+
+    clearInfo();
   }
 
   /**

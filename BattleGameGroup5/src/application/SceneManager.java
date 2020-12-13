@@ -13,11 +13,11 @@ import javafx.stage.Stage;
 /**
  * Meant to be a base class when creating different scenes.
  * 
- * When you want to create a scene, extend this and place the
- * code for the elements of the scene in the createScene override.
+ * When you want to create a scene, extend this and place the code for the
+ * elements of the scene in the createScene override.
  * 
- * If you need to use data from the database, use the database manager to
- * get that data in an override of onLoad.
+ * If you need to use data from the database, use the database manager to get
+ * that data in an override of onLoad.
  * 
  * @author Wyatt
  *
@@ -45,7 +45,7 @@ public abstract class SceneManager {
     mTitle = title;
     mScene = createScene();
   }
-  
+
   /**
    * Sets the scene and database manager.
    * 
@@ -73,12 +73,13 @@ public abstract class SceneManager {
     mStage.setScene(mScene);
     mStage.show();
   }
-  
+
   /**
-   * Does things on loading into the new scene.
-   * Meant to be overridden by children.
+   * Does things on loading into the new scene. Meant to be overridden by
+   * children.
    */
-  protected void onLoad() { }
+  protected void onLoad() {
+  }
 
   /**
    * Sets the given label's font, width, and layout to the determined defaults.
@@ -162,7 +163,7 @@ public abstract class SceneManager {
   protected void setTextFieldBackground(TextField field, String color) {
     field.setStyle("-fx-control-inner-background: #" + color);
   }
-  
+
   /**
    * Returns the stage the scene is on.
    * 
@@ -171,6 +172,7 @@ public abstract class SceneManager {
   public Stage getStage() {
     return mStage;
   }
+
   /**
    * Returns the title of the scene.
    * 

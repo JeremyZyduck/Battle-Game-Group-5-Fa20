@@ -10,8 +10,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- * Meant to be added to buttons with the setOnAction function.
- * Pulls open a file chooser for the user to select the desired action.
+ * Meant to be added to buttons with the setOnAction function. Pulls open a file
+ * chooser for the user to select the desired action.
  * 
  * @authors Wyatt
  *
@@ -21,9 +21,10 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   private Stage mStage;
   // File that was selected.
   private File mFile;
-  
+
+  // List of things that happen when the file is selected.
   private ArrayList<EventHandler<ActionEvent>> mOnSelectEvents;
-  
+
   /**
    * Constructs an AnimationChooser.
    * 
@@ -33,10 +34,10 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
     mStage = stage;
     mOnSelectEvents = new ArrayList<EventHandler<ActionEvent>>();
   }
-  
+
   /**
-   * Override to run on button press.
-   * Opens a file chooser and saves the selected file as a member to be accessed later.
+   * Override to run on button press. Opens a file chooser and saves the selected
+   * file as a member to be accessed later.
    * 
    * @param event ActionEvent
    */
@@ -49,13 +50,13 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
     fileChooser.setTitle("Upload Animation");
     // Get selected file.
     mFile = fileChooser.showOpenDialog(mStage);
-    
+
     // Call on select events.
     for (EventHandler<ActionEvent> eventHandle : mOnSelectEvents) {
       eventHandle.handle(null);
     }
   }
-  
+
   /**
    * Adds an EventHandler to do things after the animation is chosen.
    * 
@@ -64,7 +65,7 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   public void addOnSelectEvent(EventHandler<ActionEvent> event) {
     mOnSelectEvents.add(event);
   }
-  
+
   /**
    * Returns the most recent file that was gotten by the file chooser.
    * 
@@ -73,7 +74,7 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   public File getFile() {
     return mFile;
   }
-  
+
   /**
    * Returns the most recent animation gotten by the file chooser.
    * 

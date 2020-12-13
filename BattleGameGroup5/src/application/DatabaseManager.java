@@ -149,14 +149,14 @@ public class DatabaseManager {
   }
 
   /**
-   * Uploads a character to the database. TODO FIX
+   * Uploads a character to the database.
    * 
    * @param character Character to be uploaded to the database.
    * @return boolean True if the character was added to the database or false if
    *         not.
    */
   public boolean uploadCharacter(Character character) {
-    
+
     try {
       // Check if there are characters in the database. If there are, then increment
       // off the max.
@@ -177,7 +177,8 @@ public class DatabaseManager {
         charAm = rsCharMax.getInt("MAX(c.characterID)");
       }
 
-      // Check if there are attack images in the database. If there are, then increment
+      // Check if there are attack images in the database. If there are, then
+      // increment
       // off the max.
       // Otherwise start at 1.
       Statement imgAmCheckState = mConnection.createStatement();
@@ -195,11 +196,9 @@ public class DatabaseManager {
         // Get the max.
         imgAm = rsImgMax.getInt("MAX(i.imageID)");
       }
-      
-      
+
       // Create the query to add character info.
-      PreparedStatement charInfoState = mConnection.prepareStatement(
-          "INSERT INTO characterInfo VALUES (?,?,?,?,?,?);");      
+      PreparedStatement charInfoState = mConnection.prepareStatement("INSERT INTO characterInfo VALUES (?,?,?,?,?,?);");
       charInfoState.setInt(1, charAm + 1);
       charInfoState.setString(2, character.getName());
       charInfoState.setInt(3, character.getHealth());
@@ -209,17 +208,16 @@ public class DatabaseManager {
       // Execute character info insert.
       charInfoState.execute();
       character.setKey(charAm + 1);
-      
+
       ArrayList<Skill> skills = new ArrayList<Skill>(3);
       skills.add(character.getIdleSkill());
       skills.add(character.getNormalSkill());
       skills.add(character.getSpecialSkill());
       for (int i = 1; i <= skills.size(); ++i) {
         Skill skill = skills.get(i - 1);
-        
+
         // Create the query to add attack image.
-        PreparedStatement attackImgState = mConnection.prepareStatement(
-            "INSERT INTO attackImage VALUES (?,?,?);");
+        PreparedStatement attackImgState = mConnection.prepareStatement("INSERT INTO attackImage VALUES (?,?,?);");
         attackImgState.setInt(1, imgAm + i);
         // Set blob image.
         BufferedImage bImg = SwingFXUtils.fromFXImage(skill.getImage(), null);
@@ -229,29 +227,76 @@ public class DatabaseManager {
         // Set the blob.
         attackImgState.setBlob(2, is);
         attackImgState.setString(3, skill.getName());
-        
+
         // Create the query to add character attack.
-        PreparedStatement charAtkState = mConnection.prepareStatement(
-            "INSERT INTO characterAttack VALUES (?,?,?);");
+        PreparedStatement charAtkState = mConnection.prepareStatement("INSERT INTO characterAttack VALUES (?,?,?);");
         charAtkState.setInt(1, charAm + 1);
         charAtkState.setInt(2, imgAm + i);
         charAtkState.setString(3, skill.getType().toString().toLowerCase());
-        
+
         // Execute attack image and character attack inserts.
         attackImgState.execute();
         charAtkState.execute();
-      } 
-      
+      }
+
       // Put the new character into the HashMap.
       mCharacters.put(charAm + 1, character);
     } catch (Exception e) {
       e.printStackTrace();
       return false;
     }
-    
+
     return true;
   }
-  
+
+  /**
+   * Updates a character in the database.
+   * 
+   * @param character Character to be updated in the database.
+   * @return boolean True if the character was added to the database or false if
+   *         not.
+   */
+  public boolean updateCharacter(Character character) {
+    try {
+      // First update characterInfo table.
+      Statement upCharState = mConnection.createStatement();
+      String upCharQuery = "UPDATE characterInfo c " + "SET c.characterName = '" + character.getName() + "', "
+          + "c.health = " + character.getHealth() + ", " + "c.strength = " + character.getStrength() + ", "
+          + "c.defense = " + character.getDefense() + ", " + "c.cost = " + character.getCost() + " "
+          + "WHERE c.characterID = " + character.getKey() + ";";
+      upCharState.executeUpdate(upCharQuery);
+
+      // Next update attackImage table.
+      ArrayList<Skill> skills = new ArrayList<Skill>(3);
+      skills.add(character.getIdleSkill());
+      skills.add(character.getNormalSkill());
+      skills.add(character.getSpecialSkill());
+      for (Skill skill : skills) {
+        String upImgQuery = "UPDATE attackImage i " + "SET i.attackName = ?, " + "i.imageBlob = ? "
+            + "WHERE i.imageID IN " + "(SELECT a.imageID FROM characterAttack a " + "WHERE a.characterID = "
+            + character.getKey() + " " + "AND a.attackTypeID = '" + skill.getType().toString().toLowerCase() + "');";
+        PreparedStatement upImgState = mConnection.prepareStatement(upImgQuery);
+
+        upImgState.setString(1, skill.getName());
+        // Set blob image.
+        BufferedImage bImg = SwingFXUtils.fromFXImage(skill.getImage(), null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bImg, "png", baos);
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+        upImgState.setBlob(2, is);
+
+        // Execute the update.
+        upImgState.execute();
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Deletes a character, its skills, and its links from the database.
    * 
@@ -259,7 +304,7 @@ public class DatabaseManager {
    * @return boolean - If the character was successfully deleted or not.
    */
   public boolean deleteCharacter(Character character) {
-    character.printAll();
+    // character.printAll();
     // First remove the character from the HashMap.
     mCharacters.remove(character.getKey());
     // Then remove the character from the database.
@@ -267,40 +312,39 @@ public class DatabaseManager {
       // First we need to remove the characters skills.
       // Get the primary keys of the skills we need to delete.
       Statement charAtkState = mConnection.createStatement();
-      String charAtkQuery = "SELECT i.imageID FROM characterAttack i "
-          + "WHERE i.characterID = " + character.getKey() + ";";
+      String charAtkQuery = "SELECT i.imageID FROM characterAttack i " + "WHERE i.characterID = " + character.getKey()
+          + ";";
       ResultSet rsCharAtk = charAtkState.executeQuery(charAtkQuery);
       // Store the image keys to delete in a list.
       ArrayList<Integer> skillKeys = new ArrayList<Integer>();
       while (rsCharAtk.next()) {
         skillKeys.add(rsCharAtk.getInt("imageID"));
       }
-      
+
       // Now we delete the links between the character and their skills.
-      String linkDelQuery = "DELETE FROM characterAttack "
-          + "WHERE characterAttack.characterID = " + character.getKey() + ";";
+      String linkDelQuery = "DELETE FROM characterAttack " + "WHERE characterAttack.characterID = " + character.getKey()
+          + ";";
       PreparedStatement linkDelState = mConnection.prepareStatement(linkDelQuery);
       linkDelState.execute();
-      
+
       // Delete the images after deleting their collections.
       for (Integer key : skillKeys) {
-        String atkImgQuery = "DELETE FROM attackImage "
-            + "WHERE attackImage.imageID = " + key + ";";
+        String atkImgQuery = "DELETE FROM attackImage " + "WHERE attackImage.imageID = " + key + ";";
         PreparedStatement atkImgState = mConnection.prepareStatement(atkImgQuery);
         atkImgState.execute();
       }
-      
+
       // Delete the character from the table.
-      String charDelQuery = "DELETE FROM characterInfo "
-          + "WHERE characterInfo.characterID = " + character.getKey() + ";";
+      String charDelQuery = "DELETE FROM characterInfo " + "WHERE characterInfo.characterID = " + character.getKey()
+          + ";";
       PreparedStatement charDelState = mConnection.prepareStatement(charDelQuery);
       charDelState.execute();
-      
+
     } catch (Exception e) {
       e.printStackTrace();
       return false;
     }
-    
+
     return true;
   }
 

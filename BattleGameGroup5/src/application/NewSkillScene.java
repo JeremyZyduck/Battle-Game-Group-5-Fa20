@@ -13,8 +13,8 @@ import javafx.scene.image.ImageView;
 public class NewSkillScene extends SceneManager {
   // Constants.
   // Name of the scene.
-  public final static String TITLE = "Battle Game - Character Creation - New Skill";
-  
+  private final static String TITLE = "Battle Game - Character Creation - New Skill";
+
   // Singleton
   private static NewSkillScene instance = null;
 
@@ -26,10 +26,10 @@ public class NewSkillScene extends SceneManager {
   private TextField mPowerField;
   // ImageView for image
   private ImageView mImageView;
-  
+
   // For uploading the image.
   private AnimationChooser mAnimChooser;
-  
+
   // For what skill type is being made.
   private SkillType mType;
 
@@ -135,18 +135,18 @@ public class NewSkillScene extends SceneManager {
     });
 
     // Creates and adds elements to the group
-    Group g = new Group(nameLabel, mNameField, mPowerLabel, mPowerField, imageLabel,
-        imageUploadButton, mImageNameLabel, mImageView, cancelButt, submitButt);
+    Group g = new Group(nameLabel, mNameField, mPowerLabel, mPowerField, imageLabel, imageUploadButton, mImageNameLabel,
+        mImageView, cancelButt, submitButt);
 
     return new Scene(g, 500, (int) (ELEMENT_SPACE * position));
   }
-  
+
   /**
-   * Does things on loading into the new scene.
-   * Meant to be overridden by children.
+   * Does things on loading into the new scene. Meant to be overridden by
+   * children.
    */
   @Override
-  protected void onLoad() { 
+  protected void onLoad() {
     // Set visible for a non idle skill.
     if (mType != SkillType.IDLE) {
       mPowerLabel.setVisible(true);
@@ -158,18 +158,17 @@ public class NewSkillScene extends SceneManager {
       mPowerField.setText("0");
       mPowerField.setVisible(false);
     }
-    
-    
+
     // Clear some fields.
     mNameField.setText("");
     mPowerField.setText("0");
     mImageNameLabel.setText("");
     mImageView.setImage(null);
   }
-  
+
   /**
-   * Sets the type of skill that will be entered.
-   * Must be done before swapping to the scene.
+   * Sets the type of skill that will be entered. Must be done before swapping to
+   * the scene.
    * 
    * @param type - SkillType being created.
    */
@@ -177,6 +176,27 @@ public class NewSkillScene extends SceneManager {
     mType = type;
   }
 
+  /**
+   * Sends the skill so we can set the fields. Used when editing an existing
+   * skill. Must be done after swapping to the scene.
+   * 
+   * @param skill - Skill to set the fields to.
+   */
+  public void setSkillData(Skill skill) {
+    mNameField.setText(skill.getName());
+    mPowerField.setText(String.valueOf(skill.getPower()));
+    if (skill.getImage().getUrl() != null) {
+      mImageNameLabel.setText(getFileNameFromURL(skill.getImage().getUrl()));
+    } else {
+      mImageNameLabel.setText("");
+    }
+    mImageView.setImage(skill.getImage());
+  }
+
+  /**
+   * Checks if the info is valid, if it is it saves the skill info based on the
+   * user entries.
+   */
   private void saveSkill() {
     boolean isValid = true;
     // Check if name was entered.
@@ -190,16 +210,15 @@ public class NewSkillScene extends SceneManager {
     if (mType != SkillType.IDLE && (mPowerField.getText() == null || mPowerField.getText().equals(""))) {
       setTextFieldBackgroundRed(mPowerField);
       isValid = false;
-    }
-    else if (mType != SkillType.IDLE) {
+    } else if (mType != SkillType.IDLE) {
       power = Integer.parseInt(mPowerField.getText());
     }
     // Check if image was selected.
-    Image img = mAnimChooser.getAnimation();
+    Image img = mImageView.getImage();
     if (img == null) {
       isValid = false;
     }
-    
+
     // If the entries are all valid create the new skill.
     if (isValid) {
       Character curChar = CreationScene.getInstance().getCharacter();
@@ -219,9 +238,20 @@ public class NewSkillScene extends SceneManager {
         System.out.println("Unrecognized SkillType [" + mType + "] in NewSkillScene.saveSkill()");
         break;
       }
-      
+
       // Swap back to creation after finished.
       CreationScene.getInstance().swapToScene();
     }
+  }
+
+  /**
+   * Returns the name of the file associated with the URL.
+   * 
+   * @param url - String holding the URL.
+   * @return String - Name of the file in the URL.
+   */
+  private String getFileNameFromURL(String url) {
+    int index = url.lastIndexOf('/') + 1;
+    return url.substring(index);
   }
 }

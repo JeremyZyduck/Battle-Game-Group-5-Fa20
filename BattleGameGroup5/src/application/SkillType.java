@@ -1,3 +1,5 @@
 package application;
 
-public enum SkillType { IDLE, NORMAL, SPECIAL }
+public enum SkillType {
+  IDLE, NORMAL, SPECIAL
+}

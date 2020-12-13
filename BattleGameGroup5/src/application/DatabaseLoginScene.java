@@ -14,11 +14,11 @@ import javafx.scene.text.Font;
 public class DatabaseLoginScene extends SceneManager {
   // Constants.
   // Name of the scene.
-  public final static String TITLE = "Battle Game - Character Creation - Database Login";
+  private final static String TITLE = "Battle Game - Character Creation - Database Login";
 
   // Singleton
   private static DatabaseLoginScene instance = null;
-  
+
   // Text fields for database credentials scene.
   private TextField mDataUserField;
   private PasswordField mDataPassField;
@@ -87,7 +87,7 @@ public class DatabaseLoginScene extends SceneManager {
           CharacterListScene.getInstance().swapToScene();
         } else {
           invalidInfoLabel.setVisible(true);
-          checkValidDatabseAccountEntry();
+          checkValidDatabaseAccountEntry();
         }
       }
     });
@@ -101,7 +101,7 @@ public class DatabaseLoginScene extends SceneManager {
   /**
    * Sets the database account info fields red if nothing was typed in them.
    */
-  private void checkValidDatabseAccountEntry() {
+  private void checkValidDatabaseAccountEntry() {
     if (mDataUserField.getText().equals("")) {
       setTextFieldBackgroundRed(mDataUserField);
     }
