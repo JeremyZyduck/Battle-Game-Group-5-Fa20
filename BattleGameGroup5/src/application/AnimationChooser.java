@@ -58,9 +58,9 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   }
 
   /**
-   * Adds an EventHandler to do things after the animation is chosen.
+   * Adds an EventHandler to do things after an image is chosen.
    * 
-   * @param event Event to execute handle() of when the animation is chosen.
+   * @param event - Event to execute handle() of when the animation is chosen.
    */
   public void addOnSelectEvent(EventHandler<ActionEvent> event) {
     mOnSelectEvents.add(event);
@@ -69,16 +69,16 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   /**
    * Returns the most recent file that was gotten by the file chooser.
    * 
-   * @return File file that was selected.
+   * @return File - file that was selected.
    */
   public File getFile() {
     return mFile;
   }
 
   /**
-   * Returns the most recent animation gotten by the file chooser.
+   * Returns the most recent file's image gotten by the file chooser.
    * 
-   * @return Image animation that was selected.
+   * @return Image - image that was selected.
    */
   public Image getAnimation() {
     try {

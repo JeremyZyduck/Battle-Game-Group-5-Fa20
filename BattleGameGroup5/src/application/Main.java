@@ -3,6 +3,13 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * Main that starts the application.
+ * Initializes the database manager and all the scenes as well.
+ * 
+ * @author Wyatt
+ *
+ */
 public class Main extends Application {
   // Database manager
   private DatabaseManager mDatabaseManager;

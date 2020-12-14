@@ -2,6 +2,12 @@ package application;
 
 import javafx.scene.image.Image;
 
+/**
+ * Represents a skill that a character has.
+ * 
+ * @author ?
+ *
+ */
 public class Skill {
   // name of the skill
   private String mName;

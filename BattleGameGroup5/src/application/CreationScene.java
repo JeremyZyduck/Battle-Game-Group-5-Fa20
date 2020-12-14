@@ -9,6 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
+/**
+ * Represents the scene used to create new characters.
+ * Singleton class.
+ * 
+ * @author Wyatt
+ *
+ */
 public class CreationScene extends SceneManager {
   // Constants.
   // Name of the scene.
@@ -33,9 +40,6 @@ public class CreationScene extends SceneManager {
 
   /**
    * Constructs the CreationScene.
-   * 
-   * @param stage   - Stage the scene will be on.
-   * @param dataMan - Database manager.
    */
   private CreationScene() {
     super(TITLE);
@@ -170,12 +174,8 @@ public class CreationScene extends SceneManager {
     clearButton.setLayoutX(10);
     clearButton.setLayoutY(ELEMENT_SPACE * position++);
     // When the button is pressed, clear the info.
-    clearButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent arg0) {
-        clearInfo();
-      }
-    });
+    clearButton.setOnAction(e -> clearInfo());
+    
     Button submitButton = new Button("Submit");
     submitButton.setStyle("-fx-font-size:15");
     submitButton.setFont(new Font(40));
@@ -184,12 +184,7 @@ public class CreationScene extends SceneManager {
     submitButton.setLayoutX(clearButton.getLayoutX() * 2 + submitButton.getPrefWidth());
     submitButton.setLayoutY(clearButton.getLayoutY());
     // When the button is pressed, submit the character info.
-    submitButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent arg0) {
-        submitCharacterInfo();
-      }
-    });
+    submitButton.setOnAction(e -> submitCharacterInfo());
 
     Button backButton = new Button("Back");
     backButton.setStyle("-fx-font-size:15");
@@ -199,12 +194,7 @@ public class CreationScene extends SceneManager {
     backButton.setLayoutX(submitButton.getLayoutX() + backButton.getPrefWidth() * 2);
     backButton.setLayoutY(clearButton.getLayoutY());
     // When the button is pressed, return to the character list.
-    backButton.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent arg0) {
-        CharacterListScene.getInstance().swapToScene();
-      }
-    });
+    backButton.setOnAction(e -> CharacterListScene.getInstance().swapToScene());
 
     // creates and adds elements to the group
     Group g = new Group(nameLabel, mNameField, healthLabel, mHealthField, strengthLabel, mStrengthField, defenseLabel,
@@ -216,6 +206,7 @@ public class CreationScene extends SceneManager {
   }
 
   /**
+   * Does things on loading into the new scene.
    * Update the skills labels to be the character's skills.
    */
   @Override
@@ -270,7 +261,6 @@ public class CreationScene extends SceneManager {
     mStrengthField.setText("");
     mDefenseField.setText("");
     mCostField.setText("");
-    // TODO Clear skills?
 
     // Reset background colors.
     setTextFieldBackgroundDefault(mNameField);
@@ -325,6 +315,7 @@ public class CreationScene extends SceneManager {
       validData = false;
     }
 
+    
     if (validData) {
       // Adds character to mCharacters arrayList
       mCharacter.setName(charaName);
@@ -369,7 +360,8 @@ public class CreationScene extends SceneManager {
   }
 
   /**
-   * Submit new character info.
+   * Submit new character info to the database.
+   * Helper function for submitCharacterInfo.
    */
   private boolean submitNewCharacterInfo() {
     boolean isValid = true;
@@ -392,7 +384,8 @@ public class CreationScene extends SceneManager {
   }
 
   /**
-   * Submit info for existing character for update
+   * Submit info for existing character for update.
+   * Helper function for submitCharacterInfo.
    */
   private void submitExistingCharacterInfo() {
     // Update character.

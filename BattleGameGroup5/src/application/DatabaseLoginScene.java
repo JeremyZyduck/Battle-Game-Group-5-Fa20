@@ -11,6 +11,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+/**
+ * Represents the scene used to login to the database.
+ * Singleton class.
+ * 
+ * @author Wyatt
+ *
+ */
 public class DatabaseLoginScene extends SceneManager {
   // Constants.
   // Name of the scene.
@@ -25,9 +32,6 @@ public class DatabaseLoginScene extends SceneManager {
 
   /**
    * Constructs the DatabaseLoginScene.
-   * 
-   * @param stage   - Stage the scene will be on.
-   * @param dataMan - Database manager.
    */
   private DatabaseLoginScene() {
     super(TITLE);

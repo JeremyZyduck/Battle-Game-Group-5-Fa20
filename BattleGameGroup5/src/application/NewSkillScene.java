@@ -10,10 +10,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Represents the scene used to edit a character's skill.
+ * Singleton class.
+ * 
+ * @author Wyatt
+ *
+ */
 public class NewSkillScene extends SceneManager {
   // Constants.
   // Name of the scene.
-  private final static String TITLE = "Battle Game - Character Creation - New Skill";
+  private final static String TITLE = "Battle Game - Character Creation - Edit Skill";
 
   // Singleton
   private static NewSkillScene instance = null;
@@ -35,9 +42,6 @@ public class NewSkillScene extends SceneManager {
 
   /**
    * Constructs the NewSkillScene.
-   * 
-   * @param stage   - Stage the scene will be on.
-   * @param dataMan - Database manager.
    */
   private NewSkillScene() {
     super(TITLE);
@@ -46,7 +50,7 @@ public class NewSkillScene extends SceneManager {
   /**
    * Gets the singleton instance.
    * 
-   * @return NewSkillScene singleton instance.
+   * @return NewSkillScene - singleton instance.
    */
   public static NewSkillScene getInstance() {
     if (instance == null) {
@@ -142,8 +146,8 @@ public class NewSkillScene extends SceneManager {
   }
 
   /**
-   * Does things on loading into the new scene. Meant to be overridden by
-   * children.
+   * Does things on loading into the new scene.
+   * Clears some fields and if its an idle skill, hides the power textbox.
    */
   @Override
   protected void onLoad() {

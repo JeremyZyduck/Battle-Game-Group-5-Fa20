@@ -19,7 +19,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
 /**
- * Manages the connection to the database.
+ * Manages the connection to the database. Uploads, updates, and deletes data to
+ * and from the database.
  * 
  * @author Wyatt
  *
@@ -125,6 +126,7 @@ public class DatabaseManager {
           existChar.setKey(characterID);
           mCharacters.put(characterID, existChar);
         }
+        // Set the character's skill.
         switch (skillType) {
         case IDLE:
           existChar.setIdleSkill(newSkill);

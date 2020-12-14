@@ -41,7 +41,7 @@ public abstract class SceneManager {
    * 
    * @param title String title of the scene.
    */
-  public SceneManager(String title) {
+  protected SceneManager(String title) {
     mTitle = title;
     mScene = createScene();
   }

@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
+ * Tests for the Character class.
+ * 
  * @author Jeremy Zyduck
  */
 public class CharacterTest {  

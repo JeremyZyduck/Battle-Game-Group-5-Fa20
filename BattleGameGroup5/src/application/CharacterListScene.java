@@ -15,6 +15,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * Represents the scene that will display a list of all the characters in the database.
+ * Singleton class.
+ * 
+ * @author Wyatt
+ *
+ */
 public class CharacterListScene extends SceneManager {
   // Constants.
   // Name of the scene.
@@ -36,9 +43,6 @@ public class CharacterListScene extends SceneManager {
 
   /**
    * Constructs the CharacterListScene.
-   * 
-   * @param stage   - Stage the scene will be on.
-   * @param dataMan - Database manager.
    */
   private CharacterListScene() {
     super(TITLE);
