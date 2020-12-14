@@ -25,6 +25,9 @@ public class CharacterTest {
   }
 
   @Test
+  /**
+   * Tests the setName function from the character class
+   */
   public void testSetName() {
     Character test = new Character();
     String tS = "Test Name";
@@ -33,6 +36,9 @@ public class CharacterTest {
   }
 
   @Test
+  /**
+   * Tests the setCost function from the character class.
+   */
   public void testSetCost() {
     Character test = new Character();
     int tI = 1;
@@ -67,6 +73,9 @@ public class CharacterTest {
   */
 
   @Test
+  /**
+   * Tests the setHealth function from the character class.
+   */
   public void testSetHealth() {
     Character test = new Character();
     int tI = 1;
@@ -75,6 +84,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setStrength function from the character class.
+   */
   public void testSetStrength() {
     Character test = new Character();
     int tI = 1;
@@ -83,6 +95,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setDefense function from the character class.
+   */
   public void testSetDefense() {
     Character test = new Character();
     int tI = 1;
@@ -91,6 +106,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setIdleSkill function from the character class.
+   */
   public void testSetIdleSkill() {
     Character test = new Character();
     Skill tSkill = new Skill("Idle", SkillType.IDLE, 0, null);
@@ -99,6 +117,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setNormalSkill function from the character class.
+   */
   public void testSetNormalSkill() {
     Character test = new Character();
     Skill tSkill = new Skill("Normal", SkillType.NORMAL, 0, null);
@@ -107,6 +128,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setSpecialSkill function from the character class.
+   */
   public void testSetSpecialSkill() {
     Character test = new Character();
     Skill tSkill = new Skill("Special", SkillType.SPECIAL, 0, null);
@@ -115,6 +139,9 @@ public class CharacterTest {
   }
   
   @Test
+  /**
+   * Tests the setKey function from the character class.
+   */
   public void testSetKey() {
     Character test = new Character();
     int tKey = 1;
@@ -141,6 +168,9 @@ public class CharacterTest {
   */
 
   @Test
+  /**
+   * Tests the getName function from the character class.
+   */
   public void testGetName() {
     Character test = new Character();
     test.setName("test");
@@ -148,6 +178,9 @@ public class CharacterTest {
   }
 
   @Test
+  /**
+   * Tests the getCost function from the character class.
+   */
   public void testGetCost() {
     Character test = new Character();
     test.setCost(1);
@@ -178,6 +211,9 @@ public class CharacterTest {
   */
 
   @Test
+  /**
+   * Tests the getHealth function from the character class.
+   */
   public void testGetHealth() {
     Character test = new Character();
     test.setHealth(1);
