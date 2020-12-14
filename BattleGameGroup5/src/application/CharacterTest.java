@@ -7,8 +7,7 @@ import org.junit.Test;
 /**
  * @author Jeremy Zyduck
  */
-public class CharacterTest {
-  
+public class CharacterTest {  
   @Test
   public void testConstructor() {
     Character test = new Character();

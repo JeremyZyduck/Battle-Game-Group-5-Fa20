@@ -1,0 +1,49 @@
+CREATE TABLE account (
+  accountID int(11) unsigned NOT NULL,
+  username varchar(45) DEFAULT NULL,
+  accountPassword varchar(45) DEFAULT NULL,
+  accountTypeID tinyint(2) unsigned NOT NULL,
+  PRIMARY KEY (accountID),
+  CONSTRAINT fk_account_accountType
+    FOREIGN KEY (accountTypeID) REFERENCES accountType (accountTypeID) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE accountType (
+  accountTypeID tinyint(2) unsigned NOT NULL,
+  accountRole varchar(45) DEFAULT NULL,
+  PRIMARY KEY (accountTypeID)
+);
+
+CREATE TABLE characterInfo (
+  characterID int(11) unsigned NOT NULL,
+  characterName varchar(45) DEFAULT NULL,
+  PRIMARY KEY (characterID)
+);
+
+CREATE TABLE purchasedCharacter (
+  accountID int(11) unsigned NOT NULL,
+  characterID int(11) unsigned NOT NULL,
+  PRIMARY KEY (characterID, accountID),
+  CONSTRAINT fk_purchasedCharacter_account
+	FOREIGN KEY (accountID) REFERENCES account (accountID) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT fk_purchasedCharacter_characterInfo
+	FOREIGN KEY (characterID) REFERENCES characterInfo (characterID) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE characterAttack (
+  characterID int(11) unsigned NOT NULL,
+  imageID int(11) unsigned NOT NULL,
+  attackTypeID enum('idle', 'normal', 'special') DEFAULT NULL,
+  PRIMARY KEY (characterID, imageID),
+  CONSTRAINT fk_characterAttack_characterInfo
+	FOREIGN KEY (characterID) REFERENCES characterInfo (characterID) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT fk_characterAttack_attackImage
+	FOREIGN KEY (imageID) REFERENCES attackImage (imageID) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
+CREATE TABLE attackImage (
+  imageID int(11) unsigned NOT NULL,
+  imageBlob BLOB DEFAULT NULL,
+  attackName varchar(45) DEFAULT NULL,
+  PRIMARY KEY (imageID)
+);

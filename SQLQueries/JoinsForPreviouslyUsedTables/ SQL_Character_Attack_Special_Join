@@ -1,0 +1,3 @@
+SELECT G5AgileExperience.character.characterName, G5AgileExperience.character.specialAttackID, G5AgileExperience.attack.specialImage
+FROM G5AgileExperience.attack
+JOIN G5AgileExperience.character ON G5AgileExperience.attack.specialAttackID = G5AgileExperience.character.specialAttackID
