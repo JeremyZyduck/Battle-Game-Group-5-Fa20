@@ -1,0 +1,6 @@
+To install the project download and extract the folder "Battle Game Project" and run the file "Character Creation Tool".
+
+To build the project clone the repository into your ide of choice with the link: https://github.com/JeremyZyduck/Battle-Game-Group-5-Fa20.git
+Next add the libraries for mySQL connector, javaFX, and jUnit 4 into the project
+Create a new run configuration and in vm arguements enter: --module-path "path to your javaFX lib folder" --add-modules javafx.controls,javafx.fxml
+Run the file "main" with the new build configuration. 
