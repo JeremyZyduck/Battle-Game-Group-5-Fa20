@@ -7,11 +7,11 @@ import org.junit.Test;
 /**
  * @author Jeremy Zyduck
  */
-public class CharacterTest {  
+public class CharacterTest {
   @Test
   public void testConstructor() {
     Character test = new Character();
-    
+
     assertEquals(test.getName(), "");
     assertEquals(test.getCost(), 0);
     assertEquals(test.getHealth(), 0);
@@ -46,30 +46,17 @@ public class CharacterTest {
   }
 
   /*
-  @Test
-  public void testSetImage() {
-    Character test = new Character();
-    String tS = "Test Name";
-    test.setImage(tS);
-    assertEquals(tS, test.getImage());
-  }
-
-  @Test
-  public void testSetImageAttack() {
-    Character test = new Character();
-    String tS = "Test Name";
-    test.setImageAttack(tS);
-    assertEquals(tS, test.getImageAttack());
-  }
-
-  @Test
-  public void testSetImageSkill() {
-    Character test = new Character();
-    String tS = "Test Name";
-    test.setImageSkill(tS);
-    assertEquals(tS, test.getImageSkill());
-  }
-  */
+   * @Test public void testSetImage() { Character test = new Character(); String
+   * tS = "Test Name"; test.setImage(tS); assertEquals(tS, test.getImage()); }
+   * 
+   * @Test public void testSetImageAttack() { Character test = new Character();
+   * String tS = "Test Name"; test.setImageAttack(tS); assertEquals(tS,
+   * test.getImageAttack()); }
+   * 
+   * @Test public void testSetImageSkill() { Character test = new Character();
+   * String tS = "Test Name"; test.setImageSkill(tS); assertEquals(tS,
+   * test.getImageSkill()); }
+   */
 
   @Test
   /**
@@ -81,7 +68,7 @@ public class CharacterTest {
     test.setHealth(tI);
     assertEquals(tI, test.getHealth());
   }
-  
+
   @Test
   /**
    * Tests the setStrength function from the character class.
@@ -92,7 +79,7 @@ public class CharacterTest {
     test.setStrength(tI);
     assertEquals(tI, test.getStrength());
   }
-  
+
   @Test
   /**
    * Tests the setDefense function from the character class.
@@ -103,7 +90,7 @@ public class CharacterTest {
     test.setDefense(tI);
     assertEquals(tI, test.getDefense());
   }
-  
+
   @Test
   /**
    * Tests the setIdleSkill function from the character class.
@@ -114,7 +101,7 @@ public class CharacterTest {
     test.setIdleSkill(tSkill);
     assertEquals(tSkill, test.getIdleSkill());
   }
-  
+
   @Test
   /**
    * Tests the setNormalSkill function from the character class.
@@ -125,7 +112,7 @@ public class CharacterTest {
     test.setNormalSkill(tSkill);
     assertEquals(tSkill, test.getNormalSkill());
   }
-  
+
   @Test
   /**
    * Tests the setSpecialSkill function from the character class.
@@ -136,7 +123,7 @@ public class CharacterTest {
     test.setSpecialSkill(tSkill);
     assertEquals(tSkill, test.getSpecialSkill());
   }
-  
+
   @Test
   /**
    * Tests the setKey function from the character class.
@@ -149,22 +136,14 @@ public class CharacterTest {
   }
 
   /*
-  @Test
-  public void testSetAttackName() {
-    Character test = new Character();
-    String tS = "Test Name";
-    test.setAttackName(tS);
-    assertEquals(tS, test.getAttackName());
-  }
-
-  @Test
-  public void testSetSkillName() {
-    Character test = new Character();
-    String tS = "Test Name";
-    test.setSkillName(tS);
-    assertEquals(tS, test.getSkillName());
-  }
-  */
+   * @Test public void testSetAttackName() { Character test = new Character();
+   * String tS = "Test Name"; test.setAttackName(tS); assertEquals(tS,
+   * test.getAttackName()); }
+   * 
+   * @Test public void testSetSkillName() { Character test = new Character();
+   * String tS = "Test Name"; test.setSkillName(tS); assertEquals(tS,
+   * test.getSkillName()); }
+   */
 
   @Test
   /**
@@ -187,27 +166,15 @@ public class CharacterTest {
   }
 
   /*
-  @Test
-  public void testGetImage() {
-    Character test = new Character();
-    test.setImage("test");
-    assertEquals("test", test.getImage());
-  }
-
-  @Test
-  public void testGetImageAttack() {
-    Character test = new Character();
-    test.setImageAttack("test");
-    assertEquals("test", test.getImageAttack());
-  }
-
-  @Test
-  public void testGetImageSkill() {
-    Character test = new Character();
-    test.setImageSkill("test");
-    assertEquals("test", test.getImageSkill());
-  }
-  */
+   * @Test public void testGetImage() { Character test = new Character();
+   * test.setImage("test"); assertEquals("test", test.getImage()); }
+   * 
+   * @Test public void testGetImageAttack() { Character test = new Character();
+   * test.setImageAttack("test"); assertEquals("test", test.getImageAttack()); }
+   * 
+   * @Test public void testGetImageSkill() { Character test = new Character();
+   * test.setImageSkill("test"); assertEquals("test", test.getImageSkill()); }
+   */
 
   @Test
   /**
@@ -220,18 +187,10 @@ public class CharacterTest {
   }
 
   /*
-  @Test
-  public void testGetSkillName() {
-    Character test = new Character();
-    test.setSkillName("test");
-    assertEquals("test", test.getSkillName());
-  }
-
-  @Test
-  public void testGetAttackName() {
-    Character test = new Character();
-    test.setAttackName("test");
-    assertEquals("test", test.getAttackName());
-  }
-  */
+   * @Test public void testGetSkillName() { Character test = new Character();
+   * test.setSkillName("test"); assertEquals("test", test.getSkillName()); }
+   * 
+   * @Test public void testGetAttackName() { Character test = new Character();
+   * test.setAttackName("test"); assertEquals("test", test.getAttackName()); }
+   */
 }

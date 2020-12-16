@@ -33,7 +33,7 @@ public class AnimationChooser implements EventHandler<ActionEvent> {
   public AnimationChooser(Stage stage) {
     mStage = stage;
     mOnSelectEvents = new ArrayList<EventHandler<ActionEvent>>();
-  }
+  }  
 
   /**
    * Override to run on button press. Opens a file chooser and saves the selected
